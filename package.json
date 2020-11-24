@@ -1,0 +1,14 @@
+{
+    "name": "booster-dashboard",
+    "version": "0.0.1",
+    "description": "Small dashboard to show github project metrics",
+    "main": "index.js",
+    "author": {
+        "name": "Pedro Henrique",
+        "email": "pedro00dk@gmail.com"
+    },
+    "license": "ISC",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    }
+}
