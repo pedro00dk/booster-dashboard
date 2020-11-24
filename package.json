@@ -8,7 +8,17 @@
         "email": "pedro00dk@gmail.com"
     },
     "license": "ISC",
+    "devDependencies": {
+        "@types/react": "17.0.0",
+        "@types/react-dom": "17.0.0",
+        "parcel": "1.12.4",
+        "typescript": "latest"
+    },
+    "dependencies": {
+        "react": "17.0.1",
+        "react-dom": "17.0.1"
+    },
     "scripts": {
-        "test": "echo \"Error: no test specified\" && exit 1"
+        "serve": "parcel serve --port 8000 public/index.html"
     }
 }
