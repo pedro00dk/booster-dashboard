@@ -3,6 +3,7 @@
         "allowSyntheticDefaultImports": false,
         "jsx": "react",
         "lib": ["ES2020", "DOM"],
+        "moduleResolution": "node",
         "target": "ES2015"
     }
 }
