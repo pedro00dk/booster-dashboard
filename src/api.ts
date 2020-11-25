@@ -49,32 +49,44 @@ export const searchUsersAndOrganizations = (partialName: string) => {
 }
 
 /**
- * Request pull request and issues information from the provided repository.
+ * Request pull request and issues information from the provided repository, up to the provided startDate.
  *
  * @param username user or organization name
  * @param repository repository name
- * @returns a object containing the abort function and the request promise
+ * @param startDate start date of pull requests
+ * @returns list of pull requests
  */
-export const queryRepositoryData = (username: string, repository: string) => {
-    const body = JSON.stringify({
-        query: `
+export const queryRepositoryData = async (username: string, repository: string, startDate: Date) => {
+    const queryBuilder = (cursor: string) =>
+        JSON.stringify({
+            query: `
         query {
-            repository(owner: "${username}", name: "${repository}") {
-                pullRequests(last: 10) {
-                    nodes {
-                        createdAt
-                        closed
-                        closedAt
-                        merged
-                        mergedAt
-                        changedFiles
-                        commits {
-                            totalCount
+            repository( owner: "${username}", name: "${repository}") {
+                pullRequests(first: 25, orderBy: {field: CREATED_AT, direction: DESC}, after: ${cursor}) {
+                    edges {
+                        node {
+                            createdAt closedAt mergedAt changedFiles
+                            commits { totalCount }
                         }
                     }
+                    pageInfo { endCursor hasNextPage }
                 }
             }
         }`,
-    })
-    return sendGraphqlRequest(body)
+        })
+    const pullRequests = []
+    let cursor = 'null'
+    while (true) {
+        const promise = fetch(api, { method: 'POST', headers, body: queryBuilder(cursor) })
+        const response = await promise
+        const content = await response.json()
+        pullRequests.push(...content.data.repository.pullRequests.edges.map(pullRequest => pullRequest.node))
+        const pageInfo = content.data.repository.pullRequests.pageInfo
+        cursor = `"${pageInfo.endCursor}"`
+        if (!pageInfo.hasNextPage) break
+        const oldestPullRequest = pullRequests[pullRequests.length - 1]
+        const beforeStartDate = new Date(oldestPullRequest.createdAt).getTime() - startDate.getTime() < 0
+        if (beforeStartDate) break
+    }
+    return pullRequests
 }
