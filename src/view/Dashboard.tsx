@@ -1,6 +1,7 @@
 import { css } from '@emotion/css'
 import * as React from 'react'
 import { Card } from './Card'
+import { ColumnChart } from './charts/ColumnChart'
 import { SearchBar } from './SearchBar'
 
 const classes = {
@@ -27,7 +28,9 @@ export const Dashboard = () => (
         <SearchBar />
         <div className={classes.col}>
             <Card label='Average Merge Time by Pull Request Size'>
-                <div style={{ height: '28em' }}></div>
+                <div style={{ width: '100%', height: '28em' }}>
+                    <ColumnChart />
+                </div>
             </Card>
             <div className={classes.row}>
                 <Card label='Average Pull Request Merge Time'>
