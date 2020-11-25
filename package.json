@@ -9,6 +9,7 @@
     },
     "license": "ISC",
     "devDependencies": {
+        "@types/chart.js": "2.9.28",
         "@types/react": "17.0.0",
         "@types/react-dom": "17.0.0",
         "parcel": "1.12.4",
@@ -16,6 +17,7 @@
     },
     "dependencies": {
         "@emotion/css": "11.0.0",
+        "chart.js": "2.9.4",
         "react": "17.0.1",
         "react-dom": "17.0.1"
     },
