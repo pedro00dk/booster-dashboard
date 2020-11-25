@@ -2,9 +2,21 @@ import { css } from '@emotion/css'
 import * as React from 'react'
 
 const classes = {
-    container: `d-flex flex-column w-100 p-3 shadow-sm bg-white`,
-    userInput: `border-0 ${css({ fontSize: '1.5em', marginBottom: '-0.15em', outline: 'none' })}`,
-    repositoryInput: `border-0 text-black-50 ${css({ outline: 'none' })}`,
+    container: `d-flex flex-column w-100 shadow-sm bg-white ${css({
+        padding: '0.75em 1.5em 1.25em 1.5em',
+    })}`,
+    userInput: `p-0 border-0 ${css({
+        fontSize: '1.5em',
+        color: '#2e2838',
+        marginBottom: '-0.15em',
+        outline: 'none',
+        '::placeholder': { color: 'black' },
+    })}`,
+    repositoryInput: `p-0 border-0 ${css({
+        fontSize: '0.85em',
+        color: '#ab9ebd',
+        outline: 'none',
+    })}`,
 }
 
 /**
