@@ -6,9 +6,9 @@ const classes = {
         margin: '0.75em',
     })}`,
     label: css({
+        padding: '1.1em 1.8em',
         fontSize: '0.9em',
         color: '#2e2838',
-        padding: '1.1em 1.8em',
     }),
     separator: 'm-0',
     content: 'd-flex p-3',

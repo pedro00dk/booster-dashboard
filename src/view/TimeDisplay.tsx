@@ -3,9 +3,9 @@ import * as React from 'react'
 
 const classes = {
     container: css({
-        fontSize: '4em',
-        padding: '0.45em',
         width: '100%',
+        padding: '0.45em',
+        fontSize: '4em',
         textAlign: 'center',
     }),
 }
@@ -13,7 +13,7 @@ const classes = {
 /**
  * Small component to display time labels.
  * This component shows days hours and minutes resolution.
- * If time is longer than one day, it is not shown.
+ * If the time is shorter than one day, the day part is not shown.
  *
  * @param props.time time to be displayed
  */

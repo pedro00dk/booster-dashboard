@@ -6,9 +6,9 @@ const classes = {
         padding: '0.75em 1.5em 1.25em 1.5em',
     })}`,
     userInput: `p-0 border-0 ${css({
+        marginBottom: '-0.15em',
         fontSize: '1.5em',
         color: '#2e2838',
-        marginBottom: '-0.15em',
         outline: 'none',
         '::placeholder': { color: 'black' },
     })}`,
@@ -21,17 +21,13 @@ const classes = {
 
 /**
  * Search github usernames, organizations and repositories.
- * When the user presses enter or remove the focus of the inputs, onTriggerSearch is called.
+ * When the user presses enter with one of the inputs focused, onTriggerSearch is called.
  *
- * @param props.searchCallback callback function thar accepts the username and repository
- *
+ * @param props.searchCallback callback function that accepts the username and repository
  */
 export const SearchBar = (props: { searchCallback?: (username: string, repository: string) => void }) => {
     const username = React.useRef('')
     const repository = React.useRef('')
-
-    const onUsernameChange = (event: React.ChangeEvent<HTMLInputElement>) => (username.current = event.target.value)
-    const onRepositoryChange = (event: React.ChangeEvent<HTMLInputElement>) => (repository.current = event.target.value)
 
     /**
      * Trigger searchCallback when the user presses enter on the input.
@@ -51,13 +47,13 @@ export const SearchBar = (props: { searchCallback?: (username: string, repositor
             <input
                 className={classes.userInput}
                 placeholder='Username or Organization'
-                onChange={onUsernameChange}
+                onChange={event => (username.current = event.target.value)}
                 onKeyUp={onKeyup}
             />
             <input
                 className={classes.repositoryInput}
                 placeholder='Repository'
-                onChange={onRepositoryChange}
+                onChange={event => (repository.current = event.target.value)}
                 onKeyUp={onKeyup}
             />
         </div>
