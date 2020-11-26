@@ -34,20 +34,14 @@ export const SearchBar = (props: { searchCallback?: (username: string, repositor
     const onRepositoryChange = (event: React.ChangeEvent<HTMLInputElement>) => (repository.current = event.target.value)
 
     /**
-     * Trigger blur event on the input and consequently searchCallback when the user presses enter on the input.
+     * Trigger searchCallback when the user presses enter on the input.
      */
     const onKeyup = (event: React.KeyboardEvent) => {
         if (event.key !== 'Enter') return
         const element = event.target as HTMLInputElement
         event.preventDefault()
         event.stopPropagation()
-        element.blur() // triggers blur event
-    }
-
-    /**
-     * Trigger searchCallback when the inputs lose focus.
-     */
-    const onBlur = (event: React.FocusEvent) => {
+        element.blur()
         if (username.current.length == 0 || repository.current.length == 0) return
         props.searchCallback?.(username.current, repository.current)
     }
@@ -59,14 +53,12 @@ export const SearchBar = (props: { searchCallback?: (username: string, repositor
                 placeholder='Username or Organization'
                 onChange={onUsernameChange}
                 onKeyUp={onKeyup}
-                onBlur={onBlur}
             />
             <input
                 className={classes.repositoryInput}
                 placeholder='Repository'
                 onChange={onRepositoryChange}
                 onKeyUp={onKeyup}
-                onBlur={onBlur}
             />
         </div>
     )
