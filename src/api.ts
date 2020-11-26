@@ -12,6 +12,16 @@ const headers = {
 }
 
 /**
+ * Wrapper to throw errors with graphql data.
+ * This error is used when fetches do not fail but contain graphql errors.
+ */
+export class GraphQlError extends Error {
+    constructor(public errors) {
+        super('graphql error')
+    }
+}
+
+/**
  * Helper to build graphql requests with abortion support.
  *
  * @param body graphql body
@@ -42,6 +52,7 @@ const graphqlFetchCollection = async (
     while (true) {
         const response = await fetch(api, { method: 'POST', headers, signal, body: buildQuery(cursor) })
         const result = await response.json()
+        if (result.errors != undefined) throw new GraphQlError(result.errors)
         results.push(result)
         const pageInfo = getPageInfo(result)
         if (!pageInfo.hasNextPage || stopPredicate(result)) break
