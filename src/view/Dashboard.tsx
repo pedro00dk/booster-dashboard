@@ -1,5 +1,6 @@
 import { css } from '@emotion/css'
 import * as React from 'react'
+import { fetchRepositoryData, GraphQlError } from '../api'
 import { Card } from './Card'
 import { ColumnChart } from './charts/ColumnChart'
 import { SearchBar } from './SearchBar'
@@ -23,27 +24,102 @@ const classes = {
     }),
 }
 
-export const Dashboard = () => (
-    <div className={classes.container}>
-        <SearchBar />
-        <div className={classes.col}>
-            <Card label='Average Merge Time by Pull Request Size'>
-                <div style={{ width: '100%', height: '28em' }}>
-                    <ColumnChart />
-                </div>
-            </Card>
-            <div className={classes.row}>
-                <Card label='Average Pull Request Merge Time'>
-                    <span className={classes.display}>1day 2h30m</span>
+type RepositoryDataPromise = ReturnType<typeof fetchRepositoryData>['promise']
+type RepositoryData = RepositoryDataPromise extends PromiseLike<infer T> ? T : RepositoryDataPromise
+
+export const Dashboard = () => {
+    const [repositoryData, setRepositoryData] = React.useState<RepositoryData>()
+    const [fetching, setFetching] = React.useState(false)
+    const abortSearch = React.useRef<() => void>()
+    const today = new Date()
+    today.setDate(today.getDate() + 1)
+    today.setHours(0, 0, 0, -1)
+    const oneMonthAgo = new Date(today)
+    const twoMonthsAgo = new Date(today)
+    oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1)
+    twoMonthsAgo.setMonth(twoMonthsAgo.getMonth() - 2)
+
+    /**
+     * Access the api to fetch repository data.
+     * This function is a callback passed to the SearchBar component.
+     * If some repository data is already being fetched, it is aborted and a new request is send.
+     *
+     * @param username github username
+     * @param repository user repository
+     */
+    const searchCallback = async (username: string, repository: string) => {
+        abortSearch.current?.()
+        setFetching(true)
+        try {
+            const { promise, abort } = fetchRepositoryData(username, repository, twoMonthsAgo)
+            abortSearch.current = abort
+            const result = await promise
+            setRepositoryData(result)
+        } catch (error) {
+            if (error instanceof DOMException) return // aborted request
+            const message = error instanceof GraphQlError ? error.errors[0].message : error.message
+            alert(message)
+        } finally {
+            setFetching(false)
+        }
+    }
+
+    const computeAveragePullRequestMergeTime = () => {
+        if (fetching || repositoryData == undefined) return timeToDisplayString(0)
+        const mergeTimes = repositoryData.pullRequests
+            .filter(pullRequest => pullRequest.mergedAt != undefined && pullRequest.mergedAt >= oneMonthAgo)
+            .map(pullRequest => pullRequest.mergedAt.getTime() - pullRequest.createdAt.getTime())
+        const averageMergeTime = mergeTimes.reduce((acc, next) => acc + next, 0) / mergeTimes.length
+        return timeToDisplayString(averageMergeTime)
+    }
+
+    const computeAverageIssueCloseTime = () => {
+        if (fetching || repositoryData == undefined) return timeToDisplayString(0)
+        const closeTimes = repositoryData.issues
+            .filter(issue => issue.closedAt != undefined && issue.closedAt >= oneMonthAgo)
+            .map(pullRequest => pullRequest.closedAt.getTime() - pullRequest.createdAt.getTime())
+        const averageCloseTime = closeTimes.reduce((acc, next) => acc + next, 0) / closeTimes.length
+        return timeToDisplayString(averageCloseTime)
+    }
+
+    const timeToDisplayString = (time: number) => {
+        const minutes = Math.floor((time / (1000 * 60)) % 60)
+        const hours = Math.floor((time / (1000 * 60 * 60)) % 60)
+        const days = Math.floor(time / (1000 * 60 * 60 * 24))
+        const dayString = days > 0 ? `${days}day${days != 1 ? 's' : ''}` : ''
+        const hourString = `${hours}h${minutes < 10 ? '0' : ''}${minutes}m`
+        return `${dayString} ${hourString}`.trim()
+    }
+
+    const averagePullRequestMergeTime = computeAveragePullRequestMergeTime()
+    const averageIssueCloseTime = computeAverageIssueCloseTime()
+
+    console.log(repositoryData, fetching)
+
+    let timeMsg = undefined
+
+    return (
+        <div className={classes.container}>
+            <SearchBar searchCallback={searchCallback} />
+            <div className={classes.col}>
+                <Card label='Average Merge Time by Pull Request Size'>
+                    <div className='px-4' style={{ width: '100%', height: '28em' }}>
+                        <ColumnChart setDataCallback={setData => setData(['Small', 'Medium', 'Large'], [20, 32, 45])} />
+                    </div>
                 </Card>
-                <Card label='Average Issue Close Time'>
-                    <span className={classes.display}>5days 3h25m</span>
+                <div className={classes.row}>
+                    <Card label='Average Pull Request Merge Time'>
+                        <span className={classes.display}>{averagePullRequestMergeTime}</span>
+                    </Card>
+                    <Card label='Average Issue Close Time'>
+                        <span className={classes.display}>{averageIssueCloseTime}</span>
+                    </Card>
+                </div>
+                <Card label='Month Summary'>
+                    <div style={{ width: '100%', height: '32em' }} />
                 </Card>
             </div>
-            <Card label='Month Summary'>
-                <div style={{ height: '32em' }}></div>
-            </Card>
+            <span style={{ height: '3.15em' }} />
         </div>
-        <span style={{ height: '3.5em' }} />
-    </div>
-)
+    )
+}
