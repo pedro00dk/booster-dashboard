@@ -4,6 +4,7 @@ import { fetchRepositoryData, GraphQlError } from '../api'
 import { Card } from './Card'
 import { ColumnChart } from './charts/ColumnChart'
 import { SearchBar } from './SearchBar'
+import { TimeDisplay } from './TimeDisplay'
 
 const classes = {
     container: `d-flex flex-column w-100 ${css({
@@ -16,12 +17,6 @@ const classes = {
     col: `d-flex flex-column ${css({
         padding: '0.75em',
     })}`,
-    display: css({
-        fontSize: '4em',
-        padding: '0.45em',
-        width: '100%',
-        textAlign: 'center',
-    }),
 }
 
 type RepositoryDataPromise = ReturnType<typeof fetchRepositoryData>['promise']
@@ -65,38 +60,25 @@ export const Dashboard = () => {
     }
 
     const computeAveragePullRequestMergeTime = () => {
-        if (fetching || repositoryData == undefined) return timeToDisplayString(0)
+        if (fetching || repositoryData == undefined) return 0
         const mergeTimes = repositoryData.pullRequests
             .filter(pullRequest => pullRequest.mergedAt != undefined && pullRequest.mergedAt >= oneMonthAgo)
             .map(pullRequest => pullRequest.mergedAt.getTime() - pullRequest.createdAt.getTime())
-        const averageMergeTime = mergeTimes.reduce((acc, next) => acc + next, 0) / mergeTimes.length
-        return timeToDisplayString(averageMergeTime)
+        return mergeTimes.reduce((acc, next) => acc + next, 0) / mergeTimes.length
     }
 
     const computeAverageIssueCloseTime = () => {
-        if (fetching || repositoryData == undefined) return timeToDisplayString(0)
+        if (fetching || repositoryData == undefined) return 0
         const closeTimes = repositoryData.issues
             .filter(issue => issue.closedAt != undefined && issue.closedAt >= oneMonthAgo)
             .map(pullRequest => pullRequest.closedAt.getTime() - pullRequest.createdAt.getTime())
-        const averageCloseTime = closeTimes.reduce((acc, next) => acc + next, 0) / closeTimes.length
-        return timeToDisplayString(averageCloseTime)
-    }
-
-    const timeToDisplayString = (time: number) => {
-        const minutes = Math.floor((time / (1000 * 60)) % 60)
-        const hours = Math.floor((time / (1000 * 60 * 60)) % 60)
-        const days = Math.floor(time / (1000 * 60 * 60 * 24))
-        const dayString = days > 0 ? `${days}day${days != 1 ? 's' : ''}` : ''
-        const hourString = `${hours}h${minutes < 10 ? '0' : ''}${minutes}m`
-        return `${dayString} ${hourString}`.trim()
+        return closeTimes.reduce((acc, next) => acc + next, 0) / closeTimes.length
     }
 
     const averagePullRequestMergeTime = computeAveragePullRequestMergeTime()
     const averageIssueCloseTime = computeAverageIssueCloseTime()
 
     console.log(repositoryData, fetching)
-
-    let timeMsg = undefined
 
     return (
         <div className={classes.container}>
@@ -109,10 +91,10 @@ export const Dashboard = () => {
                 </Card>
                 <div className={classes.row}>
                     <Card label='Average Pull Request Merge Time'>
-                        <span className={classes.display}>{averagePullRequestMergeTime}</span>
+                        <TimeDisplay time={averagePullRequestMergeTime} />
                     </Card>
                     <Card label='Average Issue Close Time'>
-                        <span className={classes.display}>{averageIssueCloseTime}</span>
+                        <TimeDisplay time={averageIssueCloseTime} />
                     </Card>
                 </div>
                 <Card label='Month Summary'>
