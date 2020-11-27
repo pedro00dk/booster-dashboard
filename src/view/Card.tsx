@@ -2,7 +2,7 @@ import { css } from '@emotion/css'
 import * as React from 'react'
 
 const classes = {
-    container: `d-flex flex-column flex-fill rounded-lg bg-white shadow-sm margin ${css({
+    container: `d-flex flex-column flex-fill rounded-lg bg-white shadow-sm ${css({
         margin: '0.75em',
     })}`,
     label: css({
