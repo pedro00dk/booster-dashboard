@@ -11,6 +11,7 @@ const classes = {
     container: `d-flex flex-column w-100 ${css({
         background: '#f1f2f5',
         color: 'black',
+        fontFamily: '"Helvetica Regular", sans-serif',
     })}`,
     row: `d-flex flex-wrap ${css({
         padding: '-0.75em',
