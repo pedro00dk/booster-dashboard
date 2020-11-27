@@ -11,7 +11,7 @@ const classes = {
         background: 'white',
         boxShadow: '0.07em 0.07em 0.12em 0 rgba(39,40,51,0.08)',
     }),
-    label: css({
+    title: css({
         padding: '1.1em 1.65em',
         fontSize: '0.9em',
         color: '#272833',
@@ -26,14 +26,14 @@ const classes = {
 }
 
 /**
- * Card container used to wrap and label charts and other components.
+ * Card container used to wrap other components.
  *
- * @param props.label card header label
+ * @param props.title card title
  * @param props.children card content
  */
-export const Card = (props: { label: string; children?: React.ReactNode | React.ReactNode[] }) => (
+export const Card = (props: { title: string; children?: React.ReactNode | React.ReactNode[] }) => (
     <div className={classes.container}>
-        <span className={classes.label}>{props.label}</span>
+        <span className={classes.title}>{props.title}</span>
         <hr className={classes.separator} />
         <div className={classes.content}>{props.children}</div>
     </div>

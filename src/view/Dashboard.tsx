@@ -104,21 +104,21 @@ export const Dashboard = () => {
             <div className={classes.cards}>
                 <SearchBar searchCallback={searchCallback} />
                 <div className={classes.col}>
-                    <Card label='Average Merge Time by Pull Request Size'>
+                    <Card title='Average Merge Time by Pull Request Size'>
                         <ColumnChart
                             style={{ height: '28em', padding: '0em 1.5em' }}
-                            setDataCallback={setData => (setColumnsData.current = setData)}
+                            // setDataCallback={setData => (setColumnsData.current = setData)}
                         />
                     </Card>
                     <div className={classes.row}>
-                        <Card label='Average Pull Request Merge Time'>
+                        <Card title='Average Pull Request Merge Time'>
                             <TimeDisplay time={averagePullRequestMergeTime} />
                         </Card>
-                        <Card label='Average Issue Close Time'>
+                        <Card title='Average Issue Close Time'>
                             <TimeDisplay time={averageIssueCloseTime} />
                         </Card>
                     </div>
-                    <Card label='Month Summary'>
+                    <Card title='Month Summary'>
                         <div style={{ width: '100%', height: '32em' }} />
                     </Card>
                 </div>
