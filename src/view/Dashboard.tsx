@@ -4,11 +4,13 @@ import { fetchRepositoryData, GraphQlError, RepositoryData } from '../api'
 import { computeRepositoryMetrics } from '../metrics'
 import { Card } from './Card'
 import { ColumnChart } from './charts/ColumnChart'
+import { MenuBar } from './MenuBar'
 import { SearchBar } from './SearchBar'
 import { TimeDisplay } from './TimeDisplay'
 
 const classes = {
-    container: `d-flex flex-column w-100 ${css({
+    container: 'd-flex',
+    cards: `d-flex flex-column flex-fill ${css({
         background: '#f1f2f5',
         color: 'black',
         fontFamily: '"Helvetica Regular", sans-serif',
@@ -89,26 +91,29 @@ export const Dashboard = () => {
 
     return (
         <div className={classes.container}>
-            <SearchBar searchCallback={searchCallback} />
-            <div className={classes.col}>
-                <Card label='Average Merge Time by Pull Request Size'>
-                    <div className='px-4' style={{ width: '100%', height: '28em' }}>
-                        <ColumnChart setDataCallback={setData => (setColumnsData.current = setData)} />
-                    </div>
-                </Card>
-                <div className={classes.row}>
-                    <Card label='Average Pull Request Merge Time'>
-                        <TimeDisplay time={averagePullRequestMergeTime} />
+            <MenuBar />
+            <div className={classes.cards}>
+                <SearchBar searchCallback={searchCallback} />
+                <div className={classes.col}>
+                    <Card label='Average Merge Time by Pull Request Size'>
+                        <div className='px-4' style={{ width: '100%', height: '28em' }}>
+                            <ColumnChart setDataCallback={setData => (setColumnsData.current = setData)} />
+                        </div>
                     </Card>
-                    <Card label='Average Issue Close Time'>
-                        <TimeDisplay time={averageIssueCloseTime} />
+                    <div className={classes.row}>
+                        <Card label='Average Pull Request Merge Time'>
+                            <TimeDisplay time={averagePullRequestMergeTime} />
+                        </Card>
+                        <Card label='Average Issue Close Time'>
+                            <TimeDisplay time={averageIssueCloseTime} />
+                        </Card>
+                    </div>
+                    <Card label='Month Summary'>
+                        <div style={{ width: '100%', height: '32em' }} />
                     </Card>
                 </div>
-                <Card label='Month Summary'>
-                    <div style={{ width: '100%', height: '32em' }} />
-                </Card>
+                <span style={{ height: '3.15em' }} />
             </div>
-            <span style={{ height: '3.15em' }} />
         </div>
     )
 }
