@@ -105,9 +105,10 @@ export const Dashboard = () => {
                 <SearchBar searchCallback={searchCallback} />
                 <div className={classes.col}>
                     <Card label='Average Merge Time by Pull Request Size'>
-                        <div className='px-4' style={{ width: '100%', height: '28em' }}>
-                            <ColumnChart setDataCallback={setData => (setColumnsData.current = setData)} />
-                        </div>
+                        <ColumnChart
+                            style={{ height: '28em', padding: '0em 1.5em' }}
+                            setDataCallback={setData => (setColumnsData.current = setData)}
+                        />
                     </Card>
                     <div className={classes.row}>
                         <Card label='Average Pull Request Merge Time'>

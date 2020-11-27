@@ -1,9 +1,22 @@
+import { css } from '@emotion/css'
 import * as Chart from 'chart.js'
 import * as React from 'react'
 
 const classes = {
-    container: 'd-flex w-100 h-100',
+    container: css({
+        display: 'flex',
+        flexGrow: 1,
+    }),
+    canvas: css({
+        width: '100% !important',
+        height: '100% !important',
+    }),
 }
+
+// chart.js responsiveness features do not work well with flexbox
+// chart.js responsiveness features set static values on width and height based on parent size
+// this prevents the flex components and consequently the entire from shrinking because of the static sizes in canvas
+// 100% !important must be set on size properties to override the ones set by chart.js to allow page shrinking
 
 Chart.defaults.global.defaultFontSize = 14
 
@@ -51,16 +64,22 @@ const createDataset = (data: number[]) => ({
 /**
  * Simple column chart component which minor tweaks to better display time data.
  *
+ * @param props.style style of the chart container, useful for setting size properties.
  * @param props.setDataCallback callback that accepts a function to update the chart labels and values
  */
 export const ColumnChart = (props: {
+    style?: React.CSSProperties
     setDataCallback?: (setData: (labels: string[], data: number[]) => void) => void
 }) => {
     const canvas$ = React.useRef<HTMLCanvasElement>()
     const chart = React.useRef<Chart>()
 
     React.useLayoutEffect(() => {
-        chart.current = new Chart.Chart(canvas$.current.getContext('2d'), { type: 'bar' })
+        chart.current = new Chart.Chart(canvas$.current.getContext('2d'), {
+            type: 'bar',
+            options: computeChartOptions([]),
+        })
+        setData(['Small', 'Medium', 'Large'], [10, 20, 30])
         props.setDataCallback?.(setData)
     }, [])
 
@@ -72,8 +91,8 @@ export const ColumnChart = (props: {
     }
 
     return (
-        <div className={classes.container}>
-            <canvas ref={canvas$} />
+        <div className={classes.container} style={props.style}>
+            <canvas className={classes.canvas} ref={canvas$} />
         </div>
     )
 }
