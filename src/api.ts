@@ -158,7 +158,7 @@ const fetchPullRequestsQuery = (username: string, repository: string) => (cursor
         query: `
 query {
     repository( owner: "${username}", name: "${repository}") {
-        pullRequests(first: 50, orderBy: {field: CREATED_AT, direction: DESC}, after: ${cursor}) {
+        pullRequests(first: 100, orderBy: {field: CREATED_AT, direction: DESC}, after: ${cursor}) {
             edges {
                 node {
                     createdAt closedAt mergedAt changedFiles
