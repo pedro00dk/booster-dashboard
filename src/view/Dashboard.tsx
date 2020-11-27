@@ -9,18 +9,27 @@ import { SearchBar } from './SearchBar'
 import { TimeDisplay } from './TimeDisplay'
 
 const classes = {
-    container: 'd-flex',
-    cards: `d-flex flex-column flex-fill ${css({
-        background: '#f1f2f5',
+    container: css({
+        display: 'flex',
         color: 'black',
         fontFamily: '"Helvetica Regular", sans-serif',
-    })}`,
-    row: `d-flex flex-wrap ${css({
+    }),
+    cards: css({
+        display: 'flex',
+        flexDirection: 'column',
+        flexGrow: 1,
+        background: '#f1f2f5',
+    }),
+    row: css({
+        display: 'flex',
+        flexWrap: 'wrap',
         padding: '-0.75em',
-    })}`,
-    col: `d-flex flex-column ${css({
+    }),
+    col: css({
+        display: 'flex',
+        flexDirection: 'column',
         padding: '0.75em',
-    })}`,
+    }),
 }
 
 export const Dashboard = () => {

@@ -3,14 +3,16 @@ import * as React from 'react'
 import menuIcon from '../../public/icon.png'
 
 const classes = {
-    container: `d-flex flex-column ${css({
+    container: css({
+        display: 'flex',
+        flexDirection: 'column',
+        width: '5em',
         background: '#30313f',
-        width: '5.35em',
-    })}`,
+    }),
     icon: css({
         width: '2em',
         height: '2em',
-        margin: '1.87em 1.5em',
+        margin: '1.85em 1.5em',
     }),
 }
 

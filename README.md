@@ -10,3 +10,4 @@ Small dashboard to show github project metrics.
 -   The 0 tick in the column chart is missing the hour label ('h'), I also removed for this tick
 -   The chart API I am using slightly changes the bar color (I do not know the cause yet), so I had to change the color in the code to match the expected color (rgb(76, 155, 255) -> rgb(93, 131, 255))
 -   React component files have a `classes` field in the beginning, it is just a collection of precomputed classNames, when I need some dynamic styling, I use the `style` field.
+-   I used Helvetica font for everything. I saw the mockup uses the San Francisco font in a few elements, but it is an Apple font, with licencing issues: "You may use the Apple Font solely for creating mock-ups of user interfaces to be used in software products running on Apples iOS or OS X operating systems, as applicable. "

@@ -2,16 +2,27 @@ import { css } from '@emotion/css'
 import * as React from 'react'
 
 const classes = {
-    container: `d-flex flex-column flex-fill rounded-lg bg-white shadow-sm ${css({
+    container: css({
+        display: 'flex',
+        flexDirection: 'column',
+        flexGrow: 1,
         margin: '0.75em',
-    })}`,
-    label: css({
-        padding: '1.1em 1.8em',
-        fontSize: '0.9em',
-        color: '#2e2838',
+        borderRadius: '0.25em',
+        background: 'white',
+        boxShadow: '0.07em 0.07em 0.12em 0 rgba(39,40,51,0.08)',
     }),
-    separator: 'm-0',
-    content: 'd-flex p-3',
+    label: css({
+        padding: '1.1em 1.65em',
+        fontSize: '0.9em',
+        color: '#272833',
+    }),
+    separator: css({
+        margin: 0,
+    }),
+    content: css({
+        display: 'flex',
+        padding: '1em',
+    }),
 }
 
 /**
