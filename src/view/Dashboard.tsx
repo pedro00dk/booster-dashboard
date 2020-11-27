@@ -6,6 +6,9 @@ import { ColumnChart } from './charts/ColumnChart'
 import { SearchBar } from './SearchBar'
 import { TimeDisplay } from './TimeDisplay'
 
+type RepositoryDataPromise = ReturnType<typeof fetchRepositoryData>['promise']
+type RepositoryData = RepositoryDataPromise extends PromiseLike<infer T> ? T : RepositoryDataPromise
+
 const classes = {
     container: `d-flex flex-column w-100 ${css({
         background: '#f1f2f5',
@@ -19,13 +22,75 @@ const classes = {
     })}`,
 }
 
-type RepositoryDataPromise = ReturnType<typeof fetchRepositoryData>['promise']
-type RepositoryData = RepositoryDataPromise extends PromiseLike<infer T> ? T : RepositoryDataPromise
+/**
+ * Compute the average time taken to a pull request to be merged given a time range.
+ * If there is no pull requests merged in the time range, -1 is returned.
+ *
+ * @param pullRequests repository pull requests
+ * @param from beginning of the time range
+ * @param to end of the time range
+ */
+const computeAveragePullRequestMergeTime = (pullRequests: RepositoryData['pullRequests'], from: Date, to: Date) => {
+    const mergeTimes = pullRequests
+        .filter(pr => pr.mergedAt != undefined && pr.mergedAt >= from && pr.mergedAt <= to)
+        .map(pr => pr.mergedAt.getTime() - pr.createdAt.getTime())
+    if (mergeTimes.length === 0) return -1
+    return mergeTimes.reduce((acc, next) => acc + next, 0) / mergeTimes.length
+}
+
+/**
+ * Compute the average time taken to a issue to be closed given a time range.
+ * If there is no issues closed in the time range, -1 is returned.
+ *
+ * @param issues repository issues
+ * @param from beginning of the time range
+ * @param to end of the time range
+ */
+const computeAverageIssueCloseTime = (issues: RepositoryData['issues'], from: Date, to: Date) => {
+    const closeTimes = issues
+        .filter(issue => issue.closedAt != undefined && issue.closedAt >= from && issue.closedAt <= to)
+        .map(issue => issue.closedAt.getTime() - issue.createdAt.getTime())
+    if (closeTimes.length === 0) return -1
+    return closeTimes.reduce((acc, next) => acc + next, 0) / closeTimes.length
+}
+
+/**
+ * Compute all metrics to generate graphs and display messages of the dashboard.
+ *
+ * @param repositoryData repository issues and pull requests
+ */
+const computeRepositoryMetrics = (repositoryData: RepositoryData, from: Date, to: Date) => {
+    if (repositoryData == undefined) return { hasData: false }
+    const smallPullRequests = repositoryData.pullRequests.filter(pr => pr.changedFiles <= 2)
+    const mediumPullRequests = repositoryData.pullRequests.filter(pr => pr.changedFiles > 2 && pr.changedFiles <= 10)
+    const largePullRequests = repositoryData.pullRequests.filter(pr => pr.changedFiles > 10)
+    const averagePullRequestMergeTime = computeAveragePullRequestMergeTime(repositoryData.pullRequests, from, to)
+    const averageSmallPullRequestMergeTime = computeAveragePullRequestMergeTime(smallPullRequests, from, to)
+    const averageMediumPullRequestMergeTime = computeAveragePullRequestMergeTime(mediumPullRequests, from, to)
+    const averageLargePullRequestMergeTime = computeAveragePullRequestMergeTime(largePullRequests, from, to)
+    const averageIssueCloseTime = computeAverageIssueCloseTime(repositoryData.issues, from, to)
+    const monthPullRequests = repositoryData.pullRequests.filter(pr => pr.createdAt >= from && pr.createdAt <= to)
+    const monthIssues = repositoryData.issues.filter(issues => issues.createdAt >= from && issues.createdAt <= to)
+    return {
+        hasData: true,
+        smallPullRequests,
+        mediumPullRequests,
+        largePullRequests,
+        averagePullRequestMergeTime,
+        averageSmallPullRequestMergeTime,
+        averageMediumPullRequestMergeTime,
+        averageLargePullRequestMergeTime,
+        averageIssueCloseTime,
+        monthPullRequests,
+        monthIssues,
+    }
+}
 
 export const Dashboard = () => {
     const [repositoryData, setRepositoryData] = React.useState<RepositoryData>()
     const [fetching, setFetching] = React.useState(false)
     const abortSearch = React.useRef<() => void>()
+    const setColumnsData = React.useRef<(labels: string[], data: number[]) => void>()
     const today = new Date()
     today.setDate(today.getDate() + 1)
     today.setHours(0, 0, 0, -1)
@@ -37,7 +102,7 @@ export const Dashboard = () => {
     /**
      * Access the api to fetch repository data.
      * This function is a callback passed to the SearchBar component.
-     * If some repository data is already being fetched, it is aborted and a new request is send.
+     * If some repository data is already being fetched, the request is aborted and a new request is sent.
      *
      * @param username github username
      * @param repository user repository
@@ -50,35 +115,42 @@ export const Dashboard = () => {
             abortSearch.current = abort
             const result = await promise
             setRepositoryData(result)
+            setFetching(false)
         } catch (error) {
-            if (error instanceof DOMException) return // aborted request
+            if (error instanceof DOMException) return // aborted request (no not reset fetching)
             const message = error instanceof GraphQlError ? error.errors[0].message : error.message
             alert(message)
-        } finally {
+            setRepositoryData(undefined)
             setFetching(false)
         }
     }
 
-    const computeAveragePullRequestMergeTime = () => {
-        if (fetching || repositoryData == undefined) return 0
-        const mergeTimes = repositoryData.pullRequests
-            .filter(pullRequest => pullRequest.mergedAt != undefined && pullRequest.mergedAt >= oneMonthAgo)
-            .map(pullRequest => pullRequest.mergedAt.getTime() - pullRequest.createdAt.getTime())
-        return mergeTimes.reduce((acc, next) => acc + next, 0) / mergeTimes.length
+    const {
+        hasData,
+        smallPullRequests,
+        mediumPullRequests,
+        largePullRequests,
+        averagePullRequestMergeTime = 0,
+        averageSmallPullRequestMergeTime = 0,
+        averageMediumPullRequestMergeTime = 0,
+        averageLargePullRequestMergeTime = 0,
+        averageIssueCloseTime = 0,
+        monthPullRequests,
+        monthIssues,
+    } = computeRepositoryMetrics(repositoryData, oneMonthAgo, today)
+
+    if (!fetching && hasData) {
+        setColumnsData.current?.(
+            ['Small', 'Medium', 'Large'],
+            [
+                averageSmallPullRequestMergeTime / (1000 * 60 * 60),
+                averageMediumPullRequestMergeTime / (1000 * 60 * 60),
+                averageLargePullRequestMergeTime / (1000 * 60 * 60),
+            ]
+        )
     }
 
-    const computeAverageIssueCloseTime = () => {
-        if (fetching || repositoryData == undefined) return 0
-        const closeTimes = repositoryData.issues
-            .filter(issue => issue.closedAt != undefined && issue.closedAt >= oneMonthAgo)
-            .map(pullRequest => pullRequest.closedAt.getTime() - pullRequest.createdAt.getTime())
-        return closeTimes.reduce((acc, next) => acc + next, 0) / closeTimes.length
-    }
-
-    const averagePullRequestMergeTime = computeAveragePullRequestMergeTime()
-    const averageIssueCloseTime = computeAverageIssueCloseTime()
-
-    console.log(repositoryData, fetching)
+    console.log('here', repositoryData, fetching)
 
     return (
         <div className={classes.container}>
@@ -86,7 +158,7 @@ export const Dashboard = () => {
             <div className={classes.col}>
                 <Card label='Average Merge Time by Pull Request Size'>
                     <div className='px-4' style={{ width: '100%', height: '28em' }}>
-                        <ColumnChart setDataCallback={setData => setData(['Small', 'Medium', 'Large'], [20, 32, 45])} />
+                        <ColumnChart setDataCallback={setData => (setColumnsData.current = setData)} />
                     </div>
                 </Card>
                 <div className={classes.row}>
