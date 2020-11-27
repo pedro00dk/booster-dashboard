@@ -1,13 +1,10 @@
 import { css } from '@emotion/css'
 import * as React from 'react'
-import { fetchRepositoryData, GraphQlError } from '../api'
+import { fetchRepositoryData, GraphQlError, RepositoryData } from '../api'
 import { Card } from './Card'
 import { ColumnChart } from './charts/ColumnChart'
 import { SearchBar } from './SearchBar'
 import { TimeDisplay } from './TimeDisplay'
-
-type RepositoryDataPromise = ReturnType<typeof fetchRepositoryData>['promise']
-type RepositoryData = RepositoryDataPromise extends PromiseLike<infer T> ? T : RepositoryDataPromise
 
 const classes = {
     container: `d-flex flex-column w-100 ${css({

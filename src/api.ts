@@ -1,8 +1,3 @@
-/**
- * API request utilities
- */
-
-//
 const api = 'https://api.github.com/graphql'
 const token = '4caeda874612c18330494e53f562a4d0a11b9f4c' // public key without any authorization
 const headers = {
@@ -139,6 +134,9 @@ export const fetchRepositoryData = (username: string, repository: string, startD
     })
     return { promise, abort: () => abortController.abort() }
 }
+
+export type RepositoryDataPromise = ReturnType<typeof fetchRepositoryData>['promise']
+export type RepositoryData = RepositoryDataPromise extends PromiseLike<infer T> ? T : RepositoryDataPromise
 
 // graphql query builders
 
