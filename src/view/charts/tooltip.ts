@@ -77,7 +77,7 @@ export const createCustomTooltip = (
      *
      * @param tooltipModel tooltip properties provided by chart.js
      */
-    function renderCustomTooltip(tooltipModel: Chart.ChartTooltipModel) {
+    function renderTooltip(tooltipModel: Chart.ChartTooltipModel) {
         const tooltip$ = (document.getElementById(id) as HTMLDivElement) ?? document.createElement('div')
         if (tooltip$.id === '') {
             tooltip$.id = id
@@ -129,7 +129,7 @@ export const createCustomTooltip = (
     /**
      * Remove the tooltip from the dom.
      */
-    const removeCustomTooltip = () => document.getElementById(id)?.remove()
+    const removeTooltip = () => document.getElementById(id)?.remove()
 
-    return { renderCustomTooltip, destroyCustomTooltip: removeCustomTooltip }
+    return { renderTooltip, removeTooltip }
 }
