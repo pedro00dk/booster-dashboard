@@ -5,6 +5,7 @@ import { computeRepositoryMetrics } from '../metrics'
 import { Card } from './Card'
 import { ColumnChart } from './charts/ColumnChart'
 import { SearchBar } from './SearchBar'
+import { Tabs } from './Tabs'
 import { TimeDisplay } from './TimeDisplay'
 
 const classes = {
@@ -132,7 +133,14 @@ export const Dashboard = () => {
                         </Card>
                     </div>
                     <Card title='Month Summary'>
-                        <div style={{ width: '100%', height: '32em' }} />
+                        <div style={{ display: 'flex', width: '100%', height: '33em', marginTop: '-1em' }}>
+                            <Tabs
+                                tabs={[
+                                    { name: 'Pull Requests', value: 38 },
+                                    { name: 'Issues', value: 60 },
+                                ]}
+                            />
+                        </div>
                     </Card>
                 </div>
                 <span style={{ height: '3.15em' }} />
