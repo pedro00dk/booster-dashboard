@@ -2,26 +2,30 @@ import { css } from '@emotion/css'
 import * as React from 'react'
 
 const classes = {
-    container: `${css({
+    container: css({
         display: 'flex',
         flexDirection: 'column',
         padding: '0.75em 1.5em 1.25em 1.5em',
         background: 'white',
         boxShadow: '0.07em 0.07em 0.12em 0 rgba(39,40,51,0.08)',
-    })}`,
-    userInput: `p-0 border-0 ${css({
+    }),
+    userInput: css({
+        padding: 0,
+        borderWidth: 0,
         fontSize: '1.5em',
         letterSpacing: 0,
         lineHeight: '1.35em',
         color: '#272833',
         outline: 'none',
         '::placeholder': { color: 'black' },
-    })}`,
-    repositoryInput: `p-0 border-0 ${css({
+    }),
+    repositoryInput: css({
+        padding: 0,
+        borderWidth: 0,
         fontSize: '0.85em',
         color: '#a7a9bc',
         outline: 'none',
-    })}`,
+    }),
 }
 
 /**
