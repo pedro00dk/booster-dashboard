@@ -85,16 +85,29 @@ export const Dashboard = () => {
         monthIssues,
     } = computeRepositoryMetrics(repositoryData, oneMonthAgo, today)
 
-    if (!fetching && hasData) {
-        setColumnsData.current?.(
-            ['Small', 'Medium', 'Large'],
-            [
-                averageSmallPullRequestMergeTime / (1000 * 60 * 60),
-                averageMediumPullRequestMergeTime / (1000 * 60 * 60),
-                averageLargePullRequestMergeTime / (1000 * 60 * 60),
-            ]
-        )
-    }
+    const labels = ['Small', 'Medium', 'Large']
+    const datasets = !hasData
+        ? [{ label: '', data: [0, 0, 0], unit: 'h', color: 'transparent', hidden: false }]
+        : [
+              {
+                  label: 'Average Time',
+                  data: [
+                      averageSmallPullRequestMergeTime / (1000 * 60 * 60),
+                      averageMediumPullRequestMergeTime / (1000 * 60 * 60),
+                      averageLargePullRequestMergeTime / (1000 * 60 * 60),
+                  ],
+                  unit: 'h',
+                  color: 'rgba(76, 155, 255)',
+                  hidden: false,
+              },
+              {
+                  label: 'Pull Requests',
+                  data: [smallPullRequests.length, mediumPullRequests.length, largePullRequests.length],
+                  unit: '',
+                  color: '',
+                  hidden: true,
+              },
+          ]
 
     console.log('here', repositoryData, fetching)
 
@@ -107,7 +120,8 @@ export const Dashboard = () => {
                     <Card title='Average Merge Time by Pull Request Size'>
                         <ColumnChart
                             style={{ height: '28em', padding: '0em 1.5em' }}
-                            // setDataCallback={setData => (setColumnsData.current = setData)}
+                            labels={labels}
+                            datasets={datasets}
                         />
                     </Card>
                     <div className={classes.row}>
