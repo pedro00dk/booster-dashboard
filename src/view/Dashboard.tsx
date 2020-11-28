@@ -4,7 +4,6 @@ import { fetchRepositoryData, GraphQlError, RepositoryData } from '../api'
 import { computeRepositoryMetrics } from '../metrics'
 import { Card } from './Card'
 import { ColumnChart } from './charts/ColumnChart'
-import { MenuBar } from './MenuBar'
 import { SearchBar } from './SearchBar'
 import { TimeDisplay } from './TimeDisplay'
 
@@ -113,7 +112,7 @@ export const Dashboard = () => {
 
     return (
         <div className={classes.container}>
-            <MenuBar />
+            {/* <MenuBar /> */}
             <div className={classes.cards}>
                 <SearchBar searchCallback={searchCallback} />
                 <div className={classes.col}>

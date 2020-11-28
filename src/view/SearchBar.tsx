@@ -5,7 +5,7 @@ const classes = {
     container: css({
         display: 'flex',
         flexDirection: 'column',
-        padding: '0.75em 1.5em 1.25em 1.5em',
+        padding: '1.1em 1.5em 1.25em 1.5em',
         background: 'white',
         boxShadow: '0.07em 0.07em 0.12em 0 rgba(39,40,51,0.08)',
     }),

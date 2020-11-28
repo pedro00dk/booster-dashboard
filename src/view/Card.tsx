@@ -12,7 +12,7 @@ const classes = {
         boxShadow: '0.07em 0.07em 0.12em 0 rgba(39,40,51,0.08)',
     }),
     title: css({
-        padding: '1.1em 1.65em',
+        padding: '1.25em 1.65em',
         fontSize: '0.9em',
         color: '#272833',
     }),

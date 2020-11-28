@@ -9,6 +9,7 @@ const classes = {
         borderRadius: '0.25em',
         background: 'white',
         fontSize: '0.9em',
+        fontFamily: '"Helvetica Regular", sans-serif',
         color: '#272833',
         boxShadow: '0 0.125em 0.5em 0 rgba(39,40,51,0.16)',
         transition: 'opacity 0.1s ease-in-out',
@@ -32,13 +33,13 @@ const classes = {
     content: css({
         display: 'flex',
         flexDirection: 'column',
-        padding: '0.7em 1em',
+        padding: '1em 1em',
     }),
     line: css({
         display: 'flex',
         flexWrap: 'nowrap',
         alignItems: 'center',
-        margin: '0.3em',
+        margin: '0.4em',
     }),
     dot: css({
         height: '0.62em',
@@ -48,7 +49,7 @@ const classes = {
     }),
     label: css({
         flexGrow: 1,
-        marginRight: '1.6em',
+        marginRight: '2em',
     }),
 }
 

@@ -4,7 +4,7 @@ import * as React from 'react'
 const classes = {
     container: css({
         width: '100%',
-        padding: '0.45em',
+        padding: '0.6em',
         fontSize: '4em',
         textAlign: 'center',
     }),
