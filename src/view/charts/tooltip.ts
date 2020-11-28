@@ -16,7 +16,7 @@ const classes = {
         ':after': {
             position: 'absolute',
             bottom: '-0.6em',
-            left: '50%',
+            left: 'calc(50% - 0.3em)',
             border: '0.3em solid transparent',
             borderTop: '0.3em solid white',
             content: '""',
@@ -58,9 +58,15 @@ const classes = {
  * @param title tooltip title, if undefined the title is not displayed
  * @param listHiddenDatasets list hidden dataset values in hte tooltip
  * @param shotColorDots show dots with the dataset color
+ * @param formatters object containing dataset labels and functions to format tooltip values
  * @returns two functions for create and remove a tooltip element
  */
-export const createCustomTooltip = (title: string = undefined, listHiddenDatasets = false, showColorDots = false) => {
+export const createCustomTooltip = (
+    title: string,
+    listHiddenDatasets: boolean,
+    showColorDots: boolean,
+    formatters: { [label: string]: (value: number) => string }
+) => {
     const id = `chart-tooltip-${Math.random()}`
     /**
      * Render a custom tooltip.
@@ -106,7 +112,8 @@ export const createCustomTooltip = (title: string = undefined, listHiddenDataset
                 label$.className = classes.label
                 dot$.style.background = color.toString()
                 label$.textContent = label
-                value$.textContent = value.toString()
+                const formatter = formatters?.[label]
+                value$.textContent = formatter?.(value as number) ?? value.toString()
                 if (showColorDots) line$.append(dot$)
                 line$.append(label$, value$)
                 content$.append(line$)
