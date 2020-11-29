@@ -29,6 +29,8 @@ const classes = {
     }),
     separator: css({
         margin: 0,
+        border: 0,
+        borderTop: '1px solid rgba(0, 0, 0, 0.1)',
     }),
     content: css({
         display: 'flex',
