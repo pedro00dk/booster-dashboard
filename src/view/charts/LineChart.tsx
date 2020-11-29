@@ -20,16 +20,14 @@ Chart.defaults.global.defaultFontSize = 14
  */
 
 /**
- * Column chart component which minor tweaks to better display time data.
- * This chart supports multi axis by settings different unit strings for each dataset.
- * The hour ('h') unit has special treatment related to its axis range ticks, but all units will work seamlessly.
+ * Line chart component.
  *
  * @param props.style style of the chart container, useful for setting size properties.
  * @param props.labels list of column labels
  * @param props.datasets datasets to be rendered by the graph
  */
 export const LineChart = (props: {
-    style?: React.CSSProperties
+    tooltipTitle?: string
     labels: Date[]
     datasets: { label: string; data: number[]; color: string }[]
 }) => {
@@ -60,7 +58,7 @@ export const LineChart = (props: {
         ]
 
         // custom tooltip configuration
-        const { renderTooltip, removeTooltip } = createCustomTooltip('hello tesitng', true, true, undefined)
+        const { renderTooltip, removeTooltip } = createCustomTooltip(props.tooltipTitle, true, true, undefined)
 
         chart.current.options = {
             responsive: true,
@@ -68,7 +66,7 @@ export const LineChart = (props: {
             legend: {
                 position: 'bottom',
                 labels: {
-                    boxWidth: 5,
+                    boxWidth: 4,
                     padding: 15,
                     usePointStyle: true,
                 },
@@ -87,11 +85,17 @@ export const LineChart = (props: {
         chart.current.data.datasets = props.datasets.map(({ label, data, color }) => ({
             label,
             data,
-            borderColor: color,
             fill: false,
             lineTension: 0,
+            borderWidth: 2,
+            borderColor: color,
             backgroundColor: color,
-            hoverBackgroundColor: color,
+            pointRadius: 0,
+            pointHoverRadius: 3,
+            pointBorderWidth: 0,
+            pointHoverBorderWidth: 0,
+            pointHitRadius: 10,
+            pointBackgroundColor: color,
         }))
         chart.current.update()
     })
