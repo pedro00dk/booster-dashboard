@@ -4,10 +4,9 @@ import { fetchRepositoryData, GraphQlError, RepositoryData } from '../api'
 import * as metrics from '../metrics'
 import { Card } from './Card'
 import { ColumnChart } from './charts/ColumnChart'
-import { LineChart } from './charts/LineChart'
 import { MenuBar } from './MenuBar'
+import { MonthSummary } from './MonthSummary'
 import { SearchBar } from './SearchBar'
-import { Tabs } from './Tabs'
 import { TimeDisplay } from './TimeDisplay'
 
 const classes = {
@@ -115,26 +114,13 @@ export const Dashboard = () => {
                         </Card>
                     </div>
                     <Card title='Month Summary'>
-                        <div
-                            style={{
-                                display: 'flex',
-                                flexDirection: 'column',
-                                flexGrow: 1,
-                                height: '33em',
-                                marginTop: '-1em',
-                            }}
-                        >
-                            <Tabs
-                                tabs={[
-                                    { name: 'Pull Requests', value: createdPullRequests },
-                                    { name: 'Issues', value: createdIssues },
-                                ]}
-                                onSelected={name => {}}
-                            />
-                            <div style={{ height: '25em', padding: '0em 1.5em' }}>
-                                <LineChart labels={lineChartLabels} datasets={pullRequestDatasets} />
-                            </div>
-                        </div>
+                        <MonthSummary
+                            labels={lineChartLabels}
+                            tabs={[
+                                { name: 'Pull Requests', value: createdPullRequests, datasets: pullRequestDatasets },
+                                { name: 'Issues', value: createdIssues, datasets: issuesDatasets },
+                            ]}
+                        />
                     </Card>
                 </div>
                 <span style={{ height: '3.15em' }} />
