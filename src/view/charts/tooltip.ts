@@ -24,7 +24,7 @@ const classes = {
         },
     }),
     title: css({
-        padding: '0.7em 1em 0.55em 1em',
+        padding: '0.8em 1em 0.65em 1em',
         color: '#272833',
     }),
     separator: css({
@@ -35,13 +35,13 @@ const classes = {
     content: css({
         display: 'flex',
         flexDirection: 'column',
-        padding: '1em 1em',
+        padding: '0.8em 1em',
     }),
     line: css({
         display: 'flex',
         flexWrap: 'nowrap',
         alignItems: 'center',
-        margin: '0.4em',
+        margin: '0.3em',
     }),
     dot: css({
         height: '0.62em',
