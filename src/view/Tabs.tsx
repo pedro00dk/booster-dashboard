@@ -37,31 +37,26 @@ const classes = {
 /**
  * Display tabs with numeric values.
  * This component does not change tabs, only renders them.
- * The onSelected callback can bed used to know with tab has been clicked.
- * The callback is called during an useEffect hook.
  *
  * @param props.tabs tabs names and values to display
- * @param props.onSelected callback that reports selected tab name
+ * @param props.selected the selected tab name
+ * @param props.onClick callback triggered when a tab is clicked
  */
-export const Tabs = (props: { tabs: { name: string; value: number }[]; onSelected?: (name: string) => void }) => {
-    const [selected, setSelected] = React.useState(props.tabs[0]?.name)
-
-    React.useEffect(() => {
-        if (selected != undefined) props.onSelected?.(selected)
-    })
-
-    return (
-        <div className={classes.container}>
-            {props.tabs?.map(({ name, value }) => (
-                <div
-                    key={name}
-                    className={`${classes.tab} ${name === selected ? classes.selectedTab : classes.unselectedTab}`}
-                    onClick={() => setSelected(name)}
-                >
-                    <span className={classes.name}>{name}</span>
-                    <span className={classes.value}>{value}</span>
-                </div>
-            ))}
-        </div>
-    )
-}
+export const Tabs = (props: {
+    tabs: { name: string; value: number }[]
+    selected?: string
+    onClick?: (name: string) => void
+}) => (
+    <div className={classes.container}>
+        {props.tabs?.map(({ name, value }) => (
+            <div
+                key={name}
+                className={`${classes.tab} ${name === props.selected ? classes.selectedTab : classes.unselectedTab}`}
+                onClick={() => props?.onClick(name)}
+            >
+                <span className={classes.name}>{name}</span>
+                <span className={classes.value}>{value ?? ''}</span>
+            </div>
+        ))}
+    </div>
+)
