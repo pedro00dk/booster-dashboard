@@ -66,8 +66,8 @@ export const LineChart = (props: {
             legend: {
                 position: 'bottom',
                 labels: {
-                    boxWidth: 4,
-                    padding: 15,
+                    boxWidth: 5,
+                    padding: 10,
                     usePointStyle: true,
                 },
             },
