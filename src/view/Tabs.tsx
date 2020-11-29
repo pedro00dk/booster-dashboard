@@ -35,16 +35,20 @@ const classes = {
 }
 
 /**
- * Component to display tabs with numeric values.
+ * Display tabs with numeric values.
  * This component does not change tabs, only renders them.
  * The onSelected callback can bed used to know with tab has been clicked.
+ * The callback is called during an useEffect hook.
  *
  * @param props.tabs tabs names and values to display
  * @param props.onSelected callback that reports selected tab name
  */
 export const Tabs = (props: { tabs: { name: string; value: number }[]; onSelected?: (name: string) => void }) => {
     const [selected, setSelected] = React.useState(props.tabs[0]?.name)
-    if (selected != undefined) props.onSelected?.(selected)
+
+    React.useEffect(() => {
+        if (selected != undefined) props.onSelected?.(selected)
+    })
 
     return (
         <div className={classes.container}>
