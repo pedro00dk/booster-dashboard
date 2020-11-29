@@ -24,6 +24,7 @@
     },
     "scripts": {
         "format": "shopt -s extglob globstar && prettier --config .prettierrc -c --write ./src/**/*.ts*",
+        "build": "parcel build --no-source-maps --detailed-report --public-url ./ --out-dir dist/build public/index.html",
         "serve": "parcel serve --port 8000 public/index.html"
     }
 }
