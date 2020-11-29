@@ -12,6 +12,7 @@ const classes = {
         minWidth: '6em',
         padding: '1em',
         borderTop: '3px solid transparent',
+        cursor: 'pointer',
         ':hover': {
             background: '#f3f3f3',
             borderTop: '3px solid #0b5fff',
