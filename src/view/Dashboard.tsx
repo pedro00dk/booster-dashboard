@@ -1,9 +1,11 @@
 import { css } from '@emotion/css'
 import * as React from 'react'
 import { fetchRepositoryData, GraphQlError, RepositoryData } from '../api'
-import { computeRepositoryMetrics } from '../metrics'
+import * as metrics from '../metrics'
 import { Card } from './Card'
 import { ColumnChart } from './charts/ColumnChart'
+import { LineChart } from './charts/LineChart'
+import { MenuBar } from './MenuBar'
 import { SearchBar } from './SearchBar'
 import { Tabs } from './Tabs'
 import { TimeDisplay } from './TimeDisplay'
@@ -71,75 +73,69 @@ export const Dashboard = () => {
         }
     }
 
+    const averagePullRequestMergeTime = metrics.computeAveragePullRequestMergeTime(
+        repositoryData?.pullRequests ?? [],
+        oneMonthAgo,
+        today
+    )
+    const averageIssueCloseTime = metrics.computeAverageIssueCloseTime(
+        repositoryData?.pullRequests ?? [],
+        oneMonthAgo,
+        today
+    )
+    const createdPullRequests = metrics.createdInRange(repositoryData?.pullRequests ?? [], oneMonthAgo, today)
+    const createdIssues = metrics.createdInRange(repositoryData?.issues ?? [], oneMonthAgo, today)
+    const { labels: columnChartLabels, datasets: columnChartDatasets } = metrics.createPullRequestSizeDatasets(
+        repositoryData,
+        oneMonthAgo,
+        today
+    )
     const {
-        hasData,
-        smallPullRequests,
-        mediumPullRequests,
-        largePullRequests,
-        averagePullRequestMergeTime = 0,
-        averageSmallPullRequestMergeTime = 0,
-        averageMediumPullRequestMergeTime = 0,
-        averageLargePullRequestMergeTime = 0,
-        averageIssueCloseTime = 0,
-        monthPullRequests,
-        monthIssues,
-    } = computeRepositoryMetrics(repositoryData, oneMonthAgo, today)
+        labels: lineChartLabels,
+        pullRequestDatasets: lineChartPullRequestDatasets,
+        issuesDatasets: lineChartIssuesDatasets,
+    } = metrics.createDaySummaryDatasets(repositoryData, oneMonthAgo, today)
 
-    const labels = ['Small', 'Medium', 'Large']
-    const datasets = !hasData
-        ? [{ label: '', data: [0, 0, 0], unit: 'h', color: 'transparent', hidden: false }]
-        : [
-              {
-                  label: 'Average Time',
-                  data: [
-                      averageSmallPullRequestMergeTime / (1000 * 60 * 60),
-                      averageMediumPullRequestMergeTime / (1000 * 60 * 60),
-                      averageLargePullRequestMergeTime / (1000 * 60 * 60),
-                  ],
-                  unit: 'h',
-                  color: 'rgba(76, 155, 255)',
-                  hidden: false,
-              },
-              {
-                  label: 'Pull Requests',
-                  data: [smallPullRequests.length, mediumPullRequests.length, largePullRequests.length],
-                  unit: '',
-                  color: '',
-                  hidden: true,
-              },
-          ]
-
-    console.log('here', repositoryData, fetching)
+    console.log(lineChartPullRequestDatasets)
 
     return (
         <div className={classes.container}>
-            {/* <MenuBar /> */}
+            <MenuBar />
             <div className={classes.cards}>
                 <SearchBar searchCallback={searchCallback} />
                 <div className={classes.col}>
                     <Card title='Average Merge Time by Pull Request Size'>
-                        <ColumnChart
-                            style={{ height: '28em', padding: '0em 1.5em' }}
-                            labels={labels}
-                            datasets={datasets}
-                        />
+                        <div style={{ flexGrow: 1, height: '28em', padding: '0em 1.5em' }}>
+                            <ColumnChart labels={columnChartLabels} datasets={columnChartDatasets} />
+                        </div>
                     </Card>
                     <div className={classes.row}>
                         <Card title='Average Pull Request Merge Time'>
-                            <TimeDisplay time={averagePullRequestMergeTime} />
+                            <TimeDisplay time={averagePullRequestMergeTime ?? 0} />
                         </Card>
                         <Card title='Average Issue Close Time'>
-                            <TimeDisplay time={averageIssueCloseTime} />
+                            <TimeDisplay time={averageIssueCloseTime ?? 0} />
                         </Card>
                     </div>
                     <Card title='Month Summary'>
-                        <div style={{ display: 'flex', width: '100%', height: '33em', marginTop: '-1em' }}>
+                        <div
+                            style={{
+                                display: 'flex',
+                                flexDirection: 'column',
+                                flexGrow: 1,
+                                height: '33em',
+                                marginTop: '-1em',
+                            }}
+                        >
                             <Tabs
                                 tabs={[
-                                    { name: 'Pull Requests', value: 38 },
-                                    { name: 'Issues', value: 60 },
+                                    { name: 'Pull Requests', value: createdPullRequests },
+                                    { name: 'Issues', value: createdIssues },
                                 ]}
                             />
+                            <div style={{ height: '25em', padding: '0em 1.5em' }}>
+                                <LineChart labels={lineChartLabels} datasets={lineChartPullRequestDatasets} />
+                            </div>
                         </div>
                     </Card>
                 </div>
