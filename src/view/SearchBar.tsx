@@ -4,10 +4,8 @@ import * as React from 'react'
 const classes = {
     container: css({
         display: 'flex',
+        flexGrow: 1,
         flexDirection: 'column',
-        padding: '1.1em 1.5em 1.25em 1.5em',
-        background: 'white',
-        boxShadow: '0.07em 0.07em 0.12em 0 rgba(39,40,51,0.08)',
     }),
     userInput: css({
         padding: 0,

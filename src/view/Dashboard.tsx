@@ -1,4 +1,4 @@
-import { css } from '@emotion/css'
+import { css, keyframes } from '@emotion/css'
 import * as React from 'react'
 import { fetchRepositoryData, GraphQlError, RepositoryData } from '../api'
 import * as metrics from '../metrics'
@@ -9,11 +9,31 @@ import { MonthSummary } from './MonthSummary'
 import { SearchBar } from './SearchBar'
 import { TimeDisplay } from './TimeDisplay'
 
+const spinnerAnimation = keyframes`
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+`
+
 const classes = {
     container: css({
         display: 'flex',
         color: 'black',
         fontFamily: '"Helvetica Regular", sans-serif',
+    }),
+    header: css({
+        display: 'flex',
+        alignItems: 'center',
+        padding: '1.1em 1.5em 1.25em 1.5em',
+        background: 'white',
+        boxShadow: '0.07em 0.07em 0.12em 0 rgba(39,40,51,0.08)',
+    }),
+    spinner: css({
+        border: '0.5em solid transparent',
+        borderTop: '0.5em solid rgb(76, 155, 255)',
+        borderRadius: '50%',
+        width: '1.5em',
+        height: '1.5em',
+        animation: `${spinnerAnimation} 0.75s linear infinite`,
     }),
     cards: css({
         display: 'flex',
@@ -106,8 +126,10 @@ export const Dashboard = () => {
         <div className={classes.container}>
             <MenuBar />
             <div className={classes.cards}>
-                <SearchBar searchCallback={searchCallback} />
-
+                <div className={classes.header}>
+                    <SearchBar searchCallback={searchCallback} />
+                    {fetching && <div className={classes.spinner}></div>}
+                </div>
                 <div className={classes.col}>
                     <Card title='Average Merge Time by Pull Request Size'>
                         <div style={{ flexGrow: 1, height: '28em', padding: '0em 1.5em' }}>
