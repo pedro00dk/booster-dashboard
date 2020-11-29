@@ -5,10 +5,6 @@ import { createCustomTooltip } from './tooltip'
 
 const classes = {
     container: css({
-        display: 'flex',
-        flexGrow: 1,
-    }),
-    canvas: css({
         width: '100% !important',
         height: '100% !important',
     }),
@@ -19,7 +15,7 @@ Chart.defaults.global.defaultFontSize = 14
 /*
  * chart.js responsiveness features do not work well with flexbox because the api sets static pixel values on chart's
  * width and height based on parent size.
- * This prevents the flex components and consequently the entire page from shrinking due to the static sizes in canvas.
+ * This prevents the flex components from shrinking, and consequently the entire page, caused by the static sizes.
  * '100% !important' must be set on canvas size properties to override the ones set by chart.js, so the page can shrink.
  */
 
@@ -27,22 +23,21 @@ Chart.defaults.global.defaultFontSize = 14
  * Column chart component which minor tweaks to better display time data.
  * This chart supports multi axis by settings different unit strings for each dataset.
  * The hour ('h') unit has special treatment related to its axis range ticks, but all units will work seamlessly.
+ * This chart will automatically resize based on the parent size.
  *
- * @param props.style style of the chart container, useful for setting size properties.
  * @param props.labels list of column labels
  * @param props.datasets datasets to be rendered by the graph
  */
 export const ColumnChart = (props: {
-    style?: React.CSSProperties
     labels: string[]
     datasets: { label: string; data: number[]; unit: string; color: string; hidden: boolean }[]
 }) => {
-    const canvas$ = React.useRef<HTMLCanvasElement>()
+    const container$ = React.useRef<HTMLCanvasElement>()
     const chart = React.useRef<Chart>()
 
     // initialize the chart
     React.useLayoutEffect(() => {
-        chart.current = new Chart.Chart(canvas$.current.getContext('2d'), { type: 'bar' })
+        chart.current = new Chart.Chart(container$.current.getContext('2d'), { type: 'bar' })
         return () => chart.current.destroy()
     }, [])
 
@@ -119,9 +114,5 @@ export const ColumnChart = (props: {
         chart.current.update()
     })
 
-    return (
-        <div className={classes.container} style={props.style}>
-            <canvas className={classes.canvas} ref={canvas$} />
-        </div>
-    )
+    return <canvas className={classes.container} ref={container$} />
 }
