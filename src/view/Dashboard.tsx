@@ -37,15 +37,37 @@ const classes = {
 export const Dashboard = () => {
     const [repositoryData, setRepositoryData] = React.useState<RepositoryData>()
     const [fetching, setFetching] = React.useState(false)
+    const [error, setError] = React.useState<Error>()
     const abortSearch = React.useRef<() => void>()
-    const setColumnsData = React.useRef<(labels: string[], data: number[]) => void>()
+
+    // compute time ranges
     const today = new Date()
     today.setDate(today.getDate() + 1)
     today.setHours(0, 0, 0, -1)
     const oneMonthAgo = new Date(today)
+    oneMonthAgo.setMonth(today.getMonth() - 1)
+    oneMonthAgo.setHours(0, 0, 0, 0)
     const twoMonthsAgo = new Date(today)
-    oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1)
-    twoMonthsAgo.setMonth(twoMonthsAgo.getMonth() - 2)
+    twoMonthsAgo.setMonth(today.getMonth() - 1)
+    twoMonthsAgo.setHours(0, 0, 0, 0)
+
+    // memoize display and chart data computation to prevent recomputing when react redraws
+    const { pullRequestMergeTime, issueCloseTime, createdPullRequests, createdIssues } = React.useMemo(() => {
+        if (fetching || repositoryData == undefined) return {}
+        const { pullRequests, issues } = repositoryData
+        return {
+            pullRequestMergeTime: metrics.computeAveragePullRequestMergeTime(pullRequests, oneMonthAgo, today),
+            issueCloseTime: metrics.computeAverageIssueCloseTime(issues, oneMonthAgo, today),
+            createdPullRequests: metrics.createdInRange(pullRequests, oneMonthAgo, today),
+            createdIssues: metrics.createdInRange(issues, oneMonthAgo, today),
+        }
+    }, [fetching, repositoryData])
+    const { labels: columnChartLabels, datasets: columnChartDatasets } = React.useMemo(() => {
+        return metrics.createPullRequestSizeDatasets(repositoryData, oneMonthAgo, today)
+    }, [fetching, repositoryData])
+    const { labels: lineChartLabels, pullRequestDatasets, issuesDatasets } = React.useMemo(() => {
+        return metrics.createDaySummaryDatasets(repositoryData, oneMonthAgo, today)
+    }, [fetching, repositoryData])
 
     /**
      * Access the api to fetch repository data.
@@ -61,48 +83,23 @@ export const Dashboard = () => {
         try {
             const { promise, abort } = fetchRepositoryData(username, repository, twoMonthsAgo)
             abortSearch.current = abort
-            const result = await promise
-            setRepositoryData(result)
+            setRepositoryData(await promise)
             setFetching(false)
         } catch (error) {
+            setError(error)
             if (error instanceof DOMException) return // aborted request (no not reset fetching)
             const message = error instanceof GraphQlError ? error.errors[0].message : error.message
             alert(message)
-            setRepositoryData(undefined)
             setFetching(false)
         }
     }
-
-    const averagePullRequestMergeTime = metrics.computeAveragePullRequestMergeTime(
-        repositoryData?.pullRequests ?? [],
-        oneMonthAgo,
-        today
-    )
-    const averageIssueCloseTime = metrics.computeAverageIssueCloseTime(
-        repositoryData?.pullRequests ?? [],
-        oneMonthAgo,
-        today
-    )
-    const createdPullRequests = metrics.createdInRange(repositoryData?.pullRequests ?? [], oneMonthAgo, today)
-    const createdIssues = metrics.createdInRange(repositoryData?.issues ?? [], oneMonthAgo, today)
-    const { labels: columnChartLabels, datasets: columnChartDatasets } = metrics.createPullRequestSizeDatasets(
-        repositoryData,
-        oneMonthAgo,
-        today
-    )
-    const {
-        labels: lineChartLabels,
-        pullRequestDatasets: lineChartPullRequestDatasets,
-        issuesDatasets: lineChartIssuesDatasets,
-    } = metrics.createDaySummaryDatasets(repositoryData, oneMonthAgo, today)
-
-    console.log(lineChartPullRequestDatasets)
 
     return (
         <div className={classes.container}>
             <MenuBar />
             <div className={classes.cards}>
                 <SearchBar searchCallback={searchCallback} />
+
                 <div className={classes.col}>
                     <Card title='Average Merge Time by Pull Request Size'>
                         <div style={{ flexGrow: 1, height: '28em', padding: '0em 1.5em' }}>
@@ -111,10 +108,10 @@ export const Dashboard = () => {
                     </Card>
                     <div className={classes.row}>
                         <Card title='Average Pull Request Merge Time'>
-                            <TimeDisplay time={averagePullRequestMergeTime ?? 0} />
+                            <TimeDisplay time={pullRequestMergeTime} />
                         </Card>
                         <Card title='Average Issue Close Time'>
-                            <TimeDisplay time={averageIssueCloseTime ?? 0} />
+                            <TimeDisplay time={issueCloseTime} />
                         </Card>
                     </div>
                     <Card title='Month Summary'>
@@ -132,9 +129,10 @@ export const Dashboard = () => {
                                     { name: 'Pull Requests', value: createdPullRequests },
                                     { name: 'Issues', value: createdIssues },
                                 ]}
+                                onSelected={name => {}}
                             />
                             <div style={{ height: '25em', padding: '0em 1.5em' }}>
-                                <LineChart labels={lineChartLabels} datasets={lineChartPullRequestDatasets} />
+                                <LineChart labels={lineChartLabels} datasets={pullRequestDatasets} />
                             </div>
                         </div>
                     </Card>
