@@ -33,10 +33,15 @@ const classes = {
     }),
 }
 
+/**
+ * Root component.
+ * The Dashboard waits for user inputs from the search bar, fetches repository data using api.ts utilities, and then
+ * compute and memoize chart and display data using metrics.ts utilities.
+ */
 export const Dashboard = () => {
-    const [repositoryData, setRepositoryData] = React.useState<RepositoryData>()
     const [fetching, setFetching] = React.useState(false)
-    const [error, setError] = React.useState<Error>()
+    const repositoryData = React.useRef<RepositoryData>()
+    const error = React.useRef<Error>()
     const abortSearch = React.useRef<() => void>()
 
     // compute time ranges
@@ -52,21 +57,21 @@ export const Dashboard = () => {
 
     // memoize display and chart data computation to prevent recomputing when react redraws
     const { pullRequestMergeTime, issueCloseTime, createdPullRequests, createdIssues } = React.useMemo(() => {
-        if (fetching || repositoryData == undefined) return {}
-        const { pullRequests, issues } = repositoryData
+        if (fetching || repositoryData.current == undefined) return {}
+        const { pullRequests, issues } = repositoryData.current
         return {
             pullRequestMergeTime: metrics.computeAveragePullRequestMergeTime(pullRequests, oneMonthAgo, today),
             issueCloseTime: metrics.computeAverageIssueCloseTime(issues, oneMonthAgo, today),
             createdPullRequests: metrics.createdInRange(pullRequests, oneMonthAgo, today),
             createdIssues: metrics.createdInRange(issues, oneMonthAgo, today),
         }
-    }, [fetching, repositoryData])
+    }, [fetching, repositoryData.current])
     const { labels: columnChartLabels, datasets: columnChartDatasets } = React.useMemo(() => {
-        return metrics.createPullRequestSizeDatasets(repositoryData, oneMonthAgo, today)
-    }, [fetching, repositoryData])
+        return metrics.createPullRequestSizeDatasets(repositoryData.current, oneMonthAgo, today)
+    }, [fetching, repositoryData.current])
     const { labels: lineChartLabels, pullRequestDatasets, issuesDatasets } = React.useMemo(() => {
-        return metrics.createDaySummaryDatasets(repositoryData, oneMonthAgo, today)
-    }, [fetching, repositoryData])
+        return metrics.createDaySummaryDatasets(repositoryData.current, oneMonthAgo, today)
+    }, [fetching, repositoryData.current])
 
     /**
      * Access the api to fetch repository data.
@@ -78,20 +83,24 @@ export const Dashboard = () => {
      */
     const searchCallback = async (username: string, repository: string) => {
         abortSearch.current?.()
+        repositoryData.current = undefined
+        error.current = undefined
         setFetching(true)
         try {
             const { promise, abort } = fetchRepositoryData(username, repository, twoMonthsAgo)
             abortSearch.current = abort
-            setRepositoryData(await promise)
+            repositoryData.current = await promise
             setFetching(false)
-        } catch (error) {
-            setError(error)
-            if (error instanceof DOMException) return // aborted request (no not reset fetching)
-            const message = error instanceof GraphQlError ? error.errors[0].message : error.message
+        } catch (e) {
+            error.current = e
+            if (e instanceof DOMException) return // aborted request (no not reset fetching)
+            const message = e instanceof GraphQlError ? e.errors[0].message : e.message
             alert(message)
             setFetching(false)
         }
     }
+
+    // console.log(fetching, error.current, repositoryData.current)
 
     return (
         <div className={classes.container}>
