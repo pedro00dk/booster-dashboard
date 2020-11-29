@@ -81,7 +81,6 @@ export const LineChart = (props: {
     // set labels and datasets, and update the chart
     React.useLayoutEffect(() => {
         chart.current.data.labels = props.labels
-        console.log(props.datasets)
         chart.current.data.datasets = props.datasets.map(({ label, data, color }) => ({
             label,
             data,
