@@ -29,10 +29,10 @@ const classes = {
 }
 
 /**
- * Search github usernames, organizations and repositories.
- * When the user presses enter with one of the inputs focused, onTriggerSearch is called.
+ * Search bar for github usernames, organizations and repositories.
+ * When the user presses enter with one of the inputs focused, searchCallback is called.
  *
- * @param props.searchCallback callback function that accepts the username and repository
+ * @param props.searchCallback callback function that accepts a username and repository
  */
 export const SearchBar = (props: { searchCallback?: (username: string, repository: string) => void }) => {
     const username = React.useRef('')
