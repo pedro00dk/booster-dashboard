@@ -17,18 +17,6 @@ export class GraphQlError extends Error {
 }
 
 /**
- * Helper to build graphql requests with abortion support.
- *
- * @param body graphql body
- * @returns a object containing the abort function and the request promise
- */
-const graphqlFetch = (body: string) => {
-    const abortController = new AbortController()
-    const promise = fetch(api, { method: 'POST', headers, body, signal: abortController.signal })
-    return { promise, abort: () => abortController.abort() }
-}
-
-/**
  * Helper function to fetch large graphql collections using cursors with abortion support.
  *
  * @param buildQuery function to build a query that only takes the current cursor
@@ -54,31 +42,6 @@ const graphqlFetchCollection = async (
         cursor = `"${pageInfo.endCursor}"`
     }
     return results
-}
-
-/**
- * Search the github api for users and organizations with name similar to partialName.
- *
- * @param partialName partial user or organization name
- * @returns a object containing the abort function and the request promise
- */
-export const searchUsersAndOrganizations = (partialName: string) => {
-    const body = JSON.stringify({
-        query: `
-        query {
-            search(type: USER, query: "${partialName}", last: 20) {
-                repos: edges {
-                    repo: node {
-                        __typename
-                        ... on Organization { login }
-                        ... on User { login }
-                    }
-                }
-            }
-        }
-        `,
-    })
-    return graphqlFetch(body)
 }
 
 /**
