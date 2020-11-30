@@ -12,8 +12,12 @@
         "@types/chart.js": "2.9.28",
         "@types/react": "17.0.0",
         "@types/react-dom": "17.0.0",
+        "@types/react-test-renderer": "17.0.0",
+        "jest": "26.4.2",
         "parcel": "1.12.4",
         "prettier": "2.2.1",
+        "react-test-renderer": "17.0.1",
+        "ts-jest": "26.4.4",
         "typescript": "latest"
     },
     "dependencies": {
