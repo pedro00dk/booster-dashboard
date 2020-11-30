@@ -1,7 +1,7 @@
 import { css } from '@emotion/css'
 import * as React from 'react'
 
-const classes = {
+export const classes = {
     container: css({
         display: 'flex',
         height: '8em',
