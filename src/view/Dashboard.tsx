@@ -128,7 +128,7 @@ export const Dashboard = () => {
             <div className={classes.cards}>
                 <div className={classes.header}>
                     <SearchBar searchCallback={searchCallback} />
-                    {fetching && <div className={classes.spinner}></div>}
+                    {fetching && <div className={classes.spinner} />}
                 </div>
                 <div className={classes.col}>
                     <Card title='Average Merge Time by Pull Request Size'>

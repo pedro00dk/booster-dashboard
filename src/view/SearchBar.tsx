@@ -42,10 +42,10 @@ export const SearchBar = (props: { searchCallback?: (username: string, repositor
     const onKeyup = (event: React.KeyboardEvent) => {
         if (event.key !== 'Enter') return
         const element = event.target as HTMLInputElement
+        element.blur()
         event.preventDefault()
         event.stopPropagation()
-        element.blur()
-        if (username.current.length == 0 || repository.current.length == 0) return
+        if (username.current.length === 0 || repository.current.length === 0) return
         props.searchCallback?.(username.current, repository.current)
     }
 

@@ -16,8 +16,6 @@ Not a lot to do, just type the name of a github user or organization in the "Use
 ### General Notes
 
 -   I am using emotion for styling, and although this library provide a package exclusive for react (@emotion/react), I do not like using libraries that do not work standalone. Hence, I decided to use @emotion/css
--   Bootstrap is fetched through CDN rather than npm, promoting smaller bundle size and faster load times due to browser caching
-    -   Bootstrap was later removed
 -   The column ticks in the vertical axis of the column chart do not follow a linear scale, my implementation does
 -   The 0 tick in the column chart is missing the hour label ('h'), I also removed for this tick
 -   I am using the chart.js as plotting library, this library is not the most flexible in terms of layout (it uses canvas), but it is small, with good animations, and the default charts are similar to the ones in the mockup

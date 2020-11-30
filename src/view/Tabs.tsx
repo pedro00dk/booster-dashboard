@@ -52,7 +52,7 @@ export const Tabs = (props: {
             <div
                 key={name}
                 className={`${classes.tab} ${name === props.selected ? classes.selectedTab : classes.unselectedTab}`}
-                onClick={() => props?.onClick(name)}
+                onClick={() => props.onClick?.(name)}
             >
                 <span className={classes.name}>{name}</span>
                 <span className={classes.value}>{value ?? ''}</span>
