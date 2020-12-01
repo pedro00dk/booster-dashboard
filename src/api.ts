@@ -1,5 +1,5 @@
+const token = process.env['TOKEN']
 const api = 'https://api.github.com/graphql'
-const token = '4caeda874612c18330494e53f562a4d0a11b9f4c' // public key without any authorization
 const headers = {
     'X-Requested-With': 'XMLHttpRequest',
     'Content-Type': 'application/json',

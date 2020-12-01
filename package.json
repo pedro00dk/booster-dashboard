@@ -28,7 +28,9 @@
     },
     "scripts": {
         "format": "shopt -s extglob globstar && prettier --config .prettierrc -c --write ./src/**/*.ts*",
-        "build": "parcel build --no-source-maps --detailed-report --public-url ./ --out-dir dist/build public/index.html",
-        "serve": "parcel serve --port 8000 public/index.html"
+        "require:token": "[ \"${TOKEN}\" ] || { echo 'TOKEN not set (github access token)' ; exit 1 ; }",
+        "build": "npm run require:token && parcel build --no-source-maps --detailed-report --public-url ./ --out-dir dist/build public/index.html",
+        "serve": "npm run require:token && parcel serve --port 8000 public/index.html",
+        "test": "jest"
     }
 }
