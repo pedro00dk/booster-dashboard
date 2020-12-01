@@ -10,6 +10,7 @@ A production build can also be produced with the following command `npm run buil
 The built application will be located at `dist/build`, and may be served by any http server such as nginx.
 
 Both `build` and `serve` scripts require a github personal access token to be provided through the `TOKEN` environment variable.
+The github personal access token does not need any access for personal tokens at all.
 
 ```shell
 $ TOKEN=<personal access token> npm run build
