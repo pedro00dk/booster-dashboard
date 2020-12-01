@@ -23,8 +23,8 @@ const classes = {
  * @param props.tabs tabs with name and value to be displayed, and the datasets of the chart associated with each tab
  */
 export const MonthSummary = (props: { labels: Date[]; tabs: { name: string; value: number; datasets: any }[] }) => {
-    const [selected, setSelected] = React.useState(props.tabs?.[0].name)
-    const datasets = props.tabs.filter(tab => tab.name === selected)?.[0].datasets ?? []
+    const [selected, setSelected] = React.useState(props.tabs[0]?.name)
+    const datasets = props.tabs.filter(tab => tab.name === selected)[0]?.datasets ?? []
 
     return (
         <div className={classes.container}>
