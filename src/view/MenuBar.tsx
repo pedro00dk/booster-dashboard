@@ -1,6 +1,5 @@
 import { css } from '@emotion/css'
 import * as React from 'react'
-import menuIcon from '../../public/icon.png'
 
 const classes = {
     container: css({
@@ -19,8 +18,4 @@ const classes = {
 /**
  * Vertical menu bar, there is not a lot to say about it.
  */
-export const MenuBar = () => (
-    <div className={classes.container}>
-        <img className={classes.icon} src={menuIcon} alt='icon' />
-    </div>
-)
+export const MenuBar = () => <div className={classes.container} />
