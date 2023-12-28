@@ -1,13 +1,31 @@
+import { createMemo, createSignal } from 'solid-js'
 import { Card } from '../components/Card'
 import { SearchBar } from '../components/SearchBar'
 import { Tabs } from '../components/Tabs'
+import { Issue, averageCloseTimeMillis, averageMergeTimeMillis, issuesActions } from '../stores/issues'
 import classes from './Dashboard.module.scss'
+
+const millisToDuration = (millis: number = 0) => {
+    if (isNaN(millis)) return 'Not a Number'
+    if (!isFinite(millis)) return millis.toString()
+    const minutes = Math.abs(millis) / 60000
+    const hours = minutes / 60
+    const days = hours / 24
+    const dayString = days >= 1 ? `${~~days}d` : ''
+    const timeString = `${~~hours % 24}h ${~~minutes % 60}m`
+    return `${dayString} ${timeString} ${millis < 0 ? 'remaining' : ''}`
+}
+
+// issuesActions.fetchIssues('solidjs', 'solid-router')
 
 export const Dashboard = () => {
     // const [fetching, setFetching] = React.useState(false)
     // const repositoryData = React.useRef<Issue[]>()
     // const error = React.useRef<Error>()
     // const abortSearch = React.useRef<() => void>()
+    const [issues, setIssues] = createSignal([] as Issue[])
+    const averageMergeTime = createMemo(() => averageMergeTimeMillis(issues()))
+    const averageCloseTime = createMemo(() => averageCloseTimeMillis(issues()))
 
     // // compute time ranges
     // const today = new Date()
@@ -59,14 +77,23 @@ export const Dashboard = () => {
 
     // console.log(fetching, error.current, repositoryData.current)
     // const classes = {} as any
-    const a = <span data-tab=''></span>
+
+    const onSubmit = async (owner: string, repo: string) => {
+        const issues = await issuesActions.fetchIssues(owner, repo)
+        setIssues(issues)
+    }
+
     return (
         <article class={classes.root}>
-            <Card>{<SearchBar onSubmit={() => console.log('submited')} />}</Card>
+            <Card>{<SearchBar onSubmit={onSubmit} />}</Card>
             <Card title='Average merge time by pull request size'></Card>
             <div class={classes.cols}>
-                <Card title='Average pull request merge time'></Card>
-                <Card title='Average issue close time'></Card>
+                <Card title='Average pull request merge time'>
+                    <span class={classes.duration}>{millisToDuration(averageMergeTime())}</span>
+                </Card>
+                <Card title='Average issue close time'>
+                    <span class={classes.duration}>{millisToDuration(averageCloseTime())}</span>
+                </Card>
             </div>
             <Card title='Month summary'>
                 <Tabs class={classes.tabs} tab='prs'>
