@@ -21,7 +21,6 @@
     },
     "scripts": {
         "format": "prettier --write ./**/*",
-        "serve": "vite",
-        "test": "jest"
+        "start": "vite"
     }
 }

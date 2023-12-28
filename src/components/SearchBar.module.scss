@@ -1,0 +1,26 @@
+.root {
+    display: flex;
+    flex-flow: column;
+
+    & > * {
+        padding: 0;
+        border: none;
+        outline: none;
+    }
+
+    & > :first-child {
+        font-size: 1.5rem;
+        color: black;
+        &::placeholder {
+            color: inherit;
+        }
+    }
+
+    & > :last-child {
+        font-size: 0.875rem;
+        color: #272833;
+        &::placeholder {
+            color: inherit;
+        }
+    }
+}
