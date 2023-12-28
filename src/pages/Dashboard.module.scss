@@ -13,11 +13,30 @@
 // `
 
 // const classes = {
-//     container: css({
+//     menu: css({
 //         display: 'flex',
-//         color: 'black',
-//         fontFamily: '"Helvetica Regular", sans-serif',
+//         flexDirection: 'column',
+//         width: '5em',
+//         background: '#30313f',
 //     }),
+//     icon: css({
+//         width: '2em',
+//         height: '2em',
+//         margin: '1.85em 1.5em',
+//     }),
+// }
+
+.root {
+    display: flex;
+    flex-flow: column;
+
+    & > aside {
+        grid-area: menu;
+        background: hsl(236, 14%, 22%);
+    }
+}
+
+// const classes = {
 //     header: css({
 //         display: 'flex',
 //         alignItems: 'center',

@@ -1,0 +1,15 @@
+.root {
+    container-type: inline-size;
+    inline-size: min(100%, 90rem);
+    flex: 1;
+    display: flex;
+    flex-flow: column;
+    padding: 2rem;
+    margin-inline: auto;
+    color: black;
+    font-family: '"Helvetica Regular", sans-serif';
+
+    & > * {
+        flex: 1;
+    }
+}

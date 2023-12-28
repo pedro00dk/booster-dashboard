@@ -1,4 +1,5 @@
 import { SearchBar } from '../components/SearchBar'
+import classes from './Dashboard.module.scss'
 
 export const Dashboard = () => {
     // const [fetching, setFetching] = React.useState(false)
@@ -55,15 +56,12 @@ export const Dashboard = () => {
     // }
 
     // console.log(fetching, error.current, repositoryData.current)
-    const classes = {} as any
+    // const classes = {} as any
     return (
-        <div class={classes.container}>
-            {/* <MenuBar /> */}
+        <article class={classes.root}>
+            <SearchBar onSubmit={() => console.log('submited')} />
             <div class={classes.cards}>
-                <div class={classes.header}>
-                    <SearchBar onSubmit={() => console.log('submited')} />
-                    {/* {fetching && <div class={classes.spinner} />} */}
-                </div>
+                <div class={classes.header}>{/* {fetching && <div class={classes.spinner} />} */}</div>
                 {/* <div class={classes.col}>
                     <Card title='Average Merge Time by Pull Request Size'>
                         <div style={{ flexGrow: 1, height: '28em', padding: '0em 1.5em' }}>
@@ -90,6 +88,6 @@ export const Dashboard = () => {
                 </div> */}
                 <span style={{ height: '3.15em' }} />
             </div>
-        </div>
+        </article>
     )
 }
