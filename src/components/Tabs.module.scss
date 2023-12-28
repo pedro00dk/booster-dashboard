@@ -1,0 +1,24 @@
+.root {
+    display: flex;
+
+    & > * {
+        min-inline-size: 5rem;
+        display: flex;
+        flex-flow: column;
+        align-items: center;
+        padding: 1rem;
+        border-block-start: 3px solid transparent;
+        color: hsl(240 10% 45%);
+        background: transparent;
+        cursor: pointer;
+        &:hover {
+            background: hsl(0 0% 95%);
+            border-block-start-color: hsl(240, 100%, 50%);
+        }
+    }
+
+    & > .selected {
+        color: inherit;
+        border-block-start-color: hsl(240, 100%, 50%);
+    }
+}

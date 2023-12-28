@@ -1,5 +1,6 @@
 import { Card } from '../components/Card'
 import { SearchBar } from '../components/SearchBar'
+import { Tabs } from '../components/Tabs'
 import classes from './Dashboard.module.scss'
 
 export const Dashboard = () => {
@@ -58,16 +59,21 @@ export const Dashboard = () => {
 
     // console.log(fetching, error.current, repositoryData.current)
     // const classes = {} as any
+    const a = <span data-tab=''></span>
     return (
         <article class={classes.root}>
             <Card>{<SearchBar onSubmit={() => console.log('submited')} />}</Card>
-            <Card></Card>
+            <Card title='Average merge time by pull request size'></Card>
             <div class={classes.cols}>
-                <Card></Card>
-
-                <Card></Card>
+                <Card title='Average pull request merge time'></Card>
+                <Card title='Average issue close time'></Card>
             </div>
-            <Card></Card>
+            <Card title='Month summary'>
+                <Tabs class={classes.tabs} tab='prs'>
+                    <span data-tab='prs'>Pull requests</span>
+                    <span data-tab='issues'>Issues</span>
+                </Tabs>
+            </Card>
 
             {/* <div class={classes.header}>
                     </div> */}
