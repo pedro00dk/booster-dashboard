@@ -1,3 +1,4 @@
+import { Card } from '../components/Card'
 import { SearchBar } from '../components/SearchBar'
 import classes from './Dashboard.module.scss'
 
@@ -59,7 +60,7 @@ export const Dashboard = () => {
     // const classes = {} as any
     return (
         <article class={classes.root}>
-            <SearchBar onSubmit={() => console.log('submited')} />
+            <Card title='heser'>{<SearchBar onSubmit={() => console.log('submited')} />}</Card>
             <div class={classes.cards}>
                 <div class={classes.header}>{/* {fetching && <div class={classes.spinner} />} */}</div>
                 {/* <div class={classes.col}>

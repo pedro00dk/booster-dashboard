@@ -2,26 +2,20 @@
     display: flex;
     flex-flow: column;
     gap: 0.5rem;
-    padding: 1rem;
-    border-radius: 0.5rem;
-    background: white;
 
     & > * {
-        padding: 0;
-        border: none;
         outline: none;
     }
 
     & > :first-child {
-        font-size: 1.5rem;
+        font-size: 1.25rem;
         &::placeholder {
             color: inherit;
         }
     }
 
     & > :last-child {
-        font-size: 1.25rem;
-        color: #272833;
+        font-size: 1rem;
         &::placeholder {
             color: inherit;
         }

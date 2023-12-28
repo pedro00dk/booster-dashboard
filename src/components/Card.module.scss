@@ -1,0 +1,15 @@
+.root {
+    display: flex;
+    flex-flow: column;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    background: white;
+    box-shadow: 0.1rem 0.1rem 0.1rem hsl(240 15% 15% / 0.08);
+    font-size: 1rem;
+
+    & > hr {
+        border-color: hsl(0 0% 0% / 0.1);
+        margin-block: 1rem;
+        margin-inline: -1rem;
+    }
+}

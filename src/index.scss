@@ -3,8 +3,9 @@
 *::after {
     box-sizing: border-box;
     padding: 0;
+    border: 0;
     margin: 0;
-    // border: none;
+    color: inherit;
 }
 
 html {
@@ -15,5 +16,10 @@ body {
     min-block-size: 100%;
     display: flex;
     flex-flow: column;
-    background: hsl(225 17% 95%);
+    background: hsl(240 15% 95%);
+}
+
+hr {
+    border-width: 0 1px 1px 0;
+    border-style: solid;
 }
