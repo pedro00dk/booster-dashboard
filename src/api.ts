@@ -1,4 +1,4 @@
-const token = process.env['TOKEN']
+const token = ''
 const api = 'https://api.github.com/graphql'
 const headers = {
     'X-Requested-With': 'XMLHttpRequest',
