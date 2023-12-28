@@ -2,6 +2,7 @@ import { createMemo, createSignal } from 'solid-js'
 import { Card } from '../components/Card'
 import { SearchBar } from '../components/SearchBar'
 import { Tabs } from '../components/Tabs'
+import { LineChart } from '../components/charts/LineChart'
 import { Issue, averageCloseTimeMillis, averageMergeTimeMillis, issuesActions } from '../stores/issues'
 import classes from './Dashboard.module.scss'
 
@@ -86,7 +87,7 @@ export const Dashboard = () => {
     return (
         <article class={classes.root}>
             <Card>{<SearchBar onSubmit={onSubmit} />}</Card>
-            <Card title='Average merge time by pull request size'></Card>
+            <Card title='Average merge time by pull request size'>{/* <ColumnChart /> */}</Card>
             <div class={classes.cols}>
                 <Card title='Average pull request merge time'>
                     <span class={classes.duration}>{millisToDuration(averageMergeTime())}</span>
@@ -100,6 +101,7 @@ export const Dashboard = () => {
                     <span data-tab='prs'>Pull requests</span>
                     <span data-tab='issues'>Issues</span>
                 </Tabs>
+                <LineChart />
             </Card>
 
             {/* <div class={classes.header}>
