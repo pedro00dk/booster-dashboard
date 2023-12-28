@@ -1,11 +1,9 @@
 import { css, keyframes } from '@emotion/css'
 import * as React from 'react'
-import { fetchRepositoryData, GraphQlError, RepositoryData } from '../api'
 import * as metrics from '../metrics'
+import { Issue, issuesActions } from '../stores/issues'
 import { Card } from './Card'
-import { ColumnChart } from './charts/ColumnChart'
 import { MenuBar } from './MenuBar'
-import { MonthSummary } from './MonthSummary'
 import { SearchBar } from './SearchBar'
 import { TimeDisplay } from './TimeDisplay'
 
@@ -60,7 +58,7 @@ const classes = {
  */
 export const Dashboard = () => {
     const [fetching, setFetching] = React.useState(false)
-    const repositoryData = React.useRef<RepositoryData>()
+    const repositoryData = React.useRef<Issue[]>()
     const error = React.useRef<Error>()
     const abortSearch = React.useRef<() => void>()
 
@@ -78,7 +76,8 @@ export const Dashboard = () => {
     // memoize display and chart data computation to prevent recomputing when react redraws
     const { pullRequestMergeTime, issueCloseTime, createdPullRequests, createdIssues } = React.useMemo(() => {
         if (fetching || repositoryData.current == undefined) return {}
-        const { pullRequests, issues } = repositoryData.current
+        const pullRequests = repositoryData.current.filter(({ pull_request }) => pull_request)
+        const issues = repositoryData.current.filter(({ pull_request }) => !pull_request)
         return {
             pullRequestMergeTime: metrics.computeAveragePullRequestMergeTime(pullRequests, oneMonthAgo, today),
             issueCloseTime: metrics.computeAverageIssueCloseTime(issues, oneMonthAgo, today),
@@ -86,12 +85,12 @@ export const Dashboard = () => {
             createdIssues: metrics.createdInRange(issues, oneMonthAgo, today),
         }
     }, [fetching, repositoryData.current])
-    const { labels: columnChartLabels, datasets: columnChartDatasets } = React.useMemo(() => {
-        return metrics.createPullRequestSizeDatasets(repositoryData.current, oneMonthAgo, today)
-    }, [fetching, repositoryData.current])
-    const { labels: lineChartLabels, pullRequestDatasets, issuesDatasets } = React.useMemo(() => {
-        return metrics.createDaySummaryDatasets(repositoryData.current, oneMonthAgo, today)
-    }, [fetching, repositoryData.current])
+    // const { labels: columnChartLabels, datasets: columnChartDatasets } = React.useMemo(() => {
+    //     return metrics.createPullRequestSizeDatasets(repositoryData.current, oneMonthAgo, today)
+    // }, [fetching, repositoryData.current])
+    // const { labels: lineChartLabels, pullRequestDatasets, issuesDatasets } = React.useMemo(() => {
+    //     return metrics.createDaySummaryDatasets(repositoryData.current, oneMonthAgo, today)
+    // }, [fetching, repositoryData.current])
 
     /**
      * Access the api to fetch repository data.
@@ -106,18 +105,9 @@ export const Dashboard = () => {
         repositoryData.current = undefined
         error.current = undefined
         setFetching(true)
-        try {
-            const { promise, abort } = fetchRepositoryData(username, repository, twoMonthsAgo)
-            abortSearch.current = abort
-            repositoryData.current = await promise
-            setFetching(false)
-        } catch (e) {
-            error.current = e
-            if (e instanceof DOMException) return // aborted request (no not reset fetching)
-            const message = e instanceof GraphQlError ? e.errors[0].message : e.message
-            alert(message)
-            setFetching(false)
-        }
+        const issues = issuesActions.fetchIssues(username, repository)
+        repositoryData.current = await issues
+        setFetching(false)
     }
 
     // console.log(fetching, error.current, repositoryData.current)
@@ -133,7 +123,7 @@ export const Dashboard = () => {
                 <div className={classes.col}>
                     <Card title='Average Merge Time by Pull Request Size'>
                         <div style={{ flexGrow: 1, height: '28em', padding: '0em 1.5em' }}>
-                            <ColumnChart labels={columnChartLabels} datasets={columnChartDatasets} />
+                            {/* <ColumnChart labels={columnChartLabels} datasets={columnChartDatasets} /> */}
                         </div>
                     </Card>
                     <div className={classes.row}>
@@ -145,13 +135,13 @@ export const Dashboard = () => {
                         </Card>
                     </div>
                     <Card title='Month Summary'>
-                        <MonthSummary
+                        {/* <MonthSummary
                             labels={lineChartLabels}
                             tabs={[
                                 { name: 'Pull Requests', value: createdPullRequests, datasets: pullRequestDatasets },
                                 { name: 'Issues', value: createdIssues, datasets: issuesDatasets },
                             ]}
-                        />
+                        /> */}
                     </Card>
                 </div>
                 <span style={{ height: '3.15em' }} />

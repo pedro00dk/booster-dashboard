@@ -2,6 +2,7 @@ import { css } from '@emotion/css'
 import * as React from 'react'
 import * as ReactDom from 'react-dom'
 import 'regenerator-runtime/runtime'
+import './stores/issues'
 import { Dashboard } from './view/Dashboard'
 
 // override default user agent stylesheet properties

@@ -1,4 +1,4 @@
-import { RepositoryData } from './api'
+import { Issue } from './stores/issues'
 
 /**
  * Compute the average time taken to a pull request to be merged.
@@ -9,19 +9,15 @@ import { RepositoryData } from './api'
  * @param to to date filter
  * @returns average merge time
  */
-export const computeAveragePullRequestMergeTime = (
-    pullRequests: RepositoryData['pullRequests'],
-    from?: Date,
-    to?: Date
-) => {
-    const mergeTimes = pullRequests
+export const computeAveragePullRequestMergeTime = (issues: Issue[], from?: Date, to?: Date) => {
+    const mergeTimes = issues
         .filter(
             pullRequest =>
-                pullRequest.mergedAt != undefined &&
-                (from == undefined || pullRequest.createdAt >= from) &&
-                (to == undefined || pullRequest.createdAt <= to)
+                pullRequest.closed_at != undefined &&
+                (from == undefined || new Date(pullRequest.created_at) >= from) &&
+                (to == undefined || new Date(pullRequest.created_at) <= to)
         )
-        .map(pullRequest => pullRequest.mergedAt.getTime() - pullRequest.createdAt.getTime())
+        .map(pullRequest => new Date(pullRequest.closed_at).getTime() - new Date(pullRequest.created_at).getTime())
     if (mergeTimes.length === 0) return undefined
     return mergeTimes.reduce((acc, next) => acc + next, 0) / mergeTimes.length
 }
@@ -35,15 +31,15 @@ export const computeAveragePullRequestMergeTime = (
  * @param to to date filter
  * @returns average close time
  */
-export const computeAverageIssueCloseTime = (issues: RepositoryData['issues'], from?: Date, to?: Date) => {
+export const computeAverageIssueCloseTime = (issues: Issue[], from?: Date, to?: Date) => {
     const closeTimes = issues
         .filter(
             issue =>
-                issue.closedAt != undefined &&
-                (from == undefined || issue.createdAt >= from) &&
-                (to == undefined || issue.createdAt <= to)
+                issue.closed_at != undefined &&
+                (from == undefined || new Date(issue.created_at) >= from) &&
+                (to == undefined || new Date(issue.created_at) <= to)
         )
-        .map(issue => issue.closedAt.getTime() - issue.createdAt.getTime())
+        .map(issue => new Date(issue.closed_at).getTime() - new Date(issue.created_at).getTime())
     if (closeTimes.length === 0) return undefined
     return closeTimes.reduce((acc, next) => acc + next, 0) / closeTimes.length
 }
@@ -54,10 +50,14 @@ export const computeAverageIssueCloseTime = (issues: RepositoryData['issues'], f
  * @param from from date filter
  * @param to to date filter
  */
-export const createdInRange = (prsOrIssues: RepositoryData['pullRequests' | 'issues'], from?: Date, to?: Date) => {
-    return (prsOrIssues as { createdAt: Date }[]).reduce(
+export const createdInRange = (prsOrIssues: Issue[], from?: Date, to?: Date) => {
+    return prsOrIssues.reduce(
         (acc, next) =>
-            acc + Number((from == undefined || next.createdAt >= from) && (to == undefined || next.createdAt <= to)),
+            acc +
+            Number(
+                (from == undefined || new Date(next.created_at) >= from) &&
+                    (to == undefined || new Date(next.created_at) <= to)
+            ),
         0
     )
 }
@@ -69,14 +69,14 @@ export const createdInRange = (prsOrIssues: RepositoryData['pullRequests' | 'iss
  * @param from from date filter
  * @param to to date filter
  */
-export const createPullRequestSizeDatasets = (repositoryData: RepositoryData, from?: Date, to?: Date) => {
+export const createPullRequestSizeDatasets = (repositoryData: Issue[], from?: Date, to?: Date) => {
     const labels = ['Small', 'Medium', 'Large']
     const datasets = [
         { label: 'Average Time', data: [0, 0, 0], unit: 'h', color: 'rgba(76, 155, 255)', hidden: false },
         { label: 'Pull Requests', data: [0, 0, 0], unit: '', color: 'transparent', hidden: true },
     ]
     if (repositoryData != undefined) {
-        const pullRequestsInRange = repositoryData.pullRequests.filter(
+        const pullRequestsInRange = repositoryData.filter(
             pullRequest =>
                 (from == undefined || pullRequest.createdAt >= from) && (to == undefined || pullRequest.createdAt <= to)
         )
