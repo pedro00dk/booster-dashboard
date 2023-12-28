@@ -3,7 +3,9 @@
     "endOfLine": "lf",
     "jsxSingleQuote": true,
     "printWidth": 120,
+    "proseWrap": "never",
     "semi": false,
     "singleQuote": true,
-    "tabWidth": 4
+    "tabWidth": 4,
+    "useTabs": false
 }

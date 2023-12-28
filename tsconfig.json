@@ -1,9 +1,16 @@
 {
     "compilerOptions": {
-        "allowSyntheticDefaultImports": false,
-        "jsx": "react",
-        "lib": ["ES2020", "DOM"],
-        "moduleResolution": "node",
-        "target": "ES2015"
+        "allowImportingTsExtensions": true,
+        "esModuleInterop": true,
+        "isolatedModules": true,
+        "jsx": "preserve",
+        "jsxImportSource": "solid-js",
+        "lib": ["ESNext", "DOM", "DOM.Iterable"],
+        "module": "ESNext",
+        "moduleResolution": "Bundler",
+        "noEmit": true,
+        "skipLibCheck": true,
+        "strict": true,
+        "target": "ES2022"
     }
 }
