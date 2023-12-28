@@ -19,10 +19,12 @@
     "dependencies": {
         "@solidjs/router": "0.10.5",
         "d3": "7.8.5",
+        "date-fns": "3.0.6",
         "solid-js": "1.8.7"
     },
     "scripts": {
         "format": "prettier --write ./**/*",
-        "start": "vite"
+        "start": "vite",
+        "build": "vite build"
     }
 }
