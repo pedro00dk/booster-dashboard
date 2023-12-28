@@ -60,10 +60,19 @@ export const Dashboard = () => {
     // const classes = {} as any
     return (
         <article class={classes.root}>
-            <Card title='heser'>{<SearchBar onSubmit={() => console.log('submited')} />}</Card>
-            <div class={classes.cards}>
-                <div class={classes.header}>{/* {fetching && <div class={classes.spinner} />} */}</div>
-                {/* <div class={classes.col}>
+            <Card>{<SearchBar onSubmit={() => console.log('submited')} />}</Card>
+            <Card></Card>
+            <div class={classes.cols}>
+                <Card></Card>
+
+                <Card></Card>
+            </div>
+            <Card></Card>
+
+            {/* <div class={classes.header}>
+                    </div> */}
+            {/* {fetching && <div class={classes.spinner} />} */}
+            {/* <div class={classes.col}>
                     <Card title='Average Merge Time by Pull Request Size'>
                         <div style={{ flexGrow: 1, height: '28em', padding: '0em 1.5em' }}>
                              <ColumnChart labels={columnChartLabels} datasets={columnChartDatasets} /> 
@@ -87,8 +96,8 @@ export const Dashboard = () => {
                         /> 
                     </Card>
                 </div> */}
-                <span style={{ height: '3.15em' }} />
-            </div>
+            {/* <span style={{ height: '3.15em' }} /> */}
+            {/* </div> */}
         </article>
     )
 }

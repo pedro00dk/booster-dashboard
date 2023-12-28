@@ -29,10 +29,16 @@
 .root {
     display: flex;
     flex-flow: column;
+    gap: 1.5rem;
 
-    & > aside {
-        grid-area: menu;
-        background: hsl(236, 14%, 22%);
+    & > .cols {
+        display: flex;
+        flex-flow: wrap;
+        gap: 1.5rem;
+
+        & > * {
+            flex: 1;
+        }
     }
 }
 
