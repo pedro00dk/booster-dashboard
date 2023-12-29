@@ -1,0 +1,14 @@
+.root {
+    display: flex;
+    flex-flow: column;
+    gap: 0.5rem;
+
+    & > svg {
+        inline-size: 100%;
+        flex: 1;
+    }
+
+    & > :empty {
+        display: none;
+    }
+}
