@@ -75,19 +75,21 @@ const millisToDuration = (millis?: number) => {
 }
 
 const dailySummaryChart = (
-    ref: SVGSVGElement,
+    div: HTMLDivElement,
+    svg: SVGSVGElement,
     size: Accessor<ResizeObserverSize>,
     data: Accessor<ReturnType<typeof dailySummaryDatasets> | undefined>,
 ) => {
-    const chart = d3.select(ref).append('g')
-    const lines = chart.append('g')
+    const chart = d3.select(svg).append('g')
+    const legend = d3.select(div).append('footer')
     const scale = { x: d3.scaleUtc(), y: d3.scaleLinear() }
     const axis = { x: chart.append('g'), y: chart.append('g') }
+    const lines = chart.append('g')
 
     // size changes
     createComputed(() => {
         const { inlineSize, blockSize } = size()
-        const pad = { l: 20, r: 10, t: 10, b: 20 }
+        const pad = { l: 20, r: 15, t: 15, b: 20 }
         const box = { w: inlineSize - pad.l - pad.r, h: blockSize - pad.t - pad.b }
         chart.attr('transform', `translate(${pad.l},${pad.t})`)
         scale.x.range([0, box.w])
@@ -127,5 +129,17 @@ const dailySummaryChart = (
             .classed(classes.line, true)
             .attr('stroke', ([group]) => colors[group])
             .attr('d', ([, series]) => d3.line((_, i) => scale.x(days[i]), scale.y)(series))
+    })
+
+    // render footer
+    createRenderEffect(() => {
+        if (!data()) return
+        const { groups, colors } = data()!
+        legend
+            .selectAll('span')
+            .data(Object.keys(groups))
+            .join('span')
+            .style('--color', group => colors[group])
+            .text(group => group)
     })
 }

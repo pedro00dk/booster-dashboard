@@ -46,4 +46,21 @@
         stroke-width: 0.5;
         stroke-dasharray: 5, 5;
     }
+
+    & footer {
+        display: flex;
+        flex-flow: wrap;
+        justify-content: center;
+        gap: 1rem;
+
+        & > span {
+            display: flex;
+            gap: 0.25rem;
+            text-transform: capitalize;
+            &::before {
+                content: '■';
+                color: var(--color, currentColor);
+            }
+        }
+    }
 }
