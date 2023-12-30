@@ -1,4 +1,6 @@
 import { defineConfig } from 'vite'
 import solid from 'vite-plugin-solid'
 
-export default defineConfig({ plugins: [solid()] })
+const base = (0, eval)('process.env.BASE') ?? '/'
+
+export default defineConfig({ base, plugins: [solid()] })
