@@ -53,12 +53,12 @@ export const Dashboard = () => {
                 >
                     <input
                         value={search.owner ?? ''}
-                        onInput={e => setSearch({ owner: e.target.value })}
+                        onInput={e => setSearch({ owner: e.target.value }, { replace: true })}
                         placeholder='Username or Organization'
                     />
                     <input
                         value={search.repo ?? ''}
-                        onInput={e => setSearch({ repo: e.target.value })}
+                        onInput={e => setSearch({ repo: e.target.value }, { replace: true })}
                         placeholder='Repository name'
                     />
                 </form>
@@ -72,7 +72,7 @@ export const Dashboard = () => {
                 </Card>
             </div>
             <Card title='Month summary'>
-                <Tabs class={classes.tabs} tab={tab()} onTab={tab => setSearch({ tab })}>
+                <Tabs class={classes.tabs} tab={tab()} onTab={tab => setSearch({ tab }, { replace: true })}>
                     <span data-tab='prs'>PRs</span>
                     <span data-tab='issues'>Issues</span>
                 </Tabs>
