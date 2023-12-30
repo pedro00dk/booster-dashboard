@@ -2,10 +2,9 @@ import { UTCDate } from '@date-fns/utc'
 import { useSearchParams } from '@solidjs/router'
 import * as d3 from 'd3'
 import { endOfDay, startOfDay, subMonths } from 'date-fns'
-import { Accessor, createComputed, createMemo, createRenderEffect, createSignal } from 'solid-js'
+import { Accessor, createComputed, createMemo, createRenderEffect, createSignal, onMount } from 'solid-js'
 import { Card } from '../components/Card'
 import { D3Svg } from '../components/D3Svg'
-import { SearchBar } from '../components/SearchBar'
 import { Tabs } from '../components/Tabs'
 import {
     Issue,
@@ -17,7 +16,7 @@ import {
 import classes from './Dashboard.module.scss'
 
 export const Dashboard = () => {
-    const [search, setSearch] = useSearchParams<Partial<{ tab: string }>>()
+    const [search, setSearch] = useSearchParams<Partial<{ owner: string; repo: string; tab: string }>>()
     const tab = () => (search.tab ?? 'prs') as 'prs' | 'issues'
     const today = endOfDay(new UTCDate())
     const oneMonthAgo = startOfDay(subMonths(new UTCDate(), 1))
@@ -38,10 +37,31 @@ export const Dashboard = () => {
 
     const onSubmit = async (owner: string, repo: string) => setIssues(await issuesActions.fetchIssues(owner, repo))
 
+    onMount(() => search.owner && search.repo && onSubmit(search.owner, search.repo))
+
     return (
         <article class={classes.root}>
             <Card>
-                <SearchBar onSubmit={onSubmit} />
+                <form
+                    class={classes.root}
+                    onKeyPress={e => {
+                        if (e.key !== 'Enter') return
+                        if (!search.owner || !search.repo) return
+                        ;(document.activeElement as HTMLElement | undefined)?.blur()
+                        onSubmit?.(search.owner, search.repo)
+                    }}
+                >
+                    <input
+                        value={search.owner ?? ''}
+                        onInput={e => setSearch({ owner: e.target.value })}
+                        placeholder='Username or Organization'
+                    />
+                    <input
+                        value={search.repo ?? ''}
+                        onInput={e => setSearch({ repo: e.target.value })}
+                        placeholder='Repository name'
+                    />
+                </form>
             </Card>
             <div class={classes.cols}>
                 <Card title='Average PR merge time'>
