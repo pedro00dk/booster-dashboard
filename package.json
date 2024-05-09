@@ -11,21 +11,22 @@
     "devDependencies": {
         "@types/d3": "7.4.3",
         "prettier": "3.2.5",
-        "sass": "1.75.0",
+        "sass": "1.77.0",
         "typescript": "5.4.5",
-        "vite": "5.2.8",
+        "vite": "5.2.11",
         "vite-plugin-solid": "2.10.2"
     },
     "dependencies": {
         "@date-fns/utc": "1.2.0",
-        "@solidjs/router": "0.13.2",
+        "@solidjs/router": "0.13.3",
         "d3": "7.9.0",
         "date-fns": "3.6.0",
-        "solid-js": "1.8.16"
+        "solid-js": "1.8.17"
     },
     "scripts": {
         "format": "prettier --write ./**/*",
         "start": "vite",
-        "build": "vite build"
+        "build": "vite build",
+        "preview": "vite preview"
     }
 }
